@@ -66,7 +66,7 @@ exports.getSizes = async(req , res) =>{
 
 exports.getOnesize = async(req , res)=>{
     try {
-        const mydata = await Size.findOne({_id : req.body._id})
+        const mydata = await Size.find({_id : req.body.sizeId})
         
         if (mydata) {
             res.json({ message: 'OK', data: mydata})

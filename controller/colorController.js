@@ -65,7 +65,7 @@ exports.getColors = async(req , res) =>{
 
 exports.getOneColor = async(req , res)=>{
     try {
-        const mydata = await Color.findOne({_id : req.body._id})
+        const mydata = await Color.find({_id : req.body.colorId})
         
         if (mydata) {
             res.json({ message: 'OK', data: mydata})
