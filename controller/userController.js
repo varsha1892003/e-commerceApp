@@ -5,6 +5,9 @@ const bcrypt = require('bcryptjs')
 const User = require('../models/user-model')
 const { env } = require('process');
 const fs = require('fs')
+const Razorpay = require('razorpay');
+const {RAZORPAYKEYID ,  RAZORPAYKEYSECRET } = process.env
+// var RazorpayInstance = new Razorpay({ key_id: RAZORPAYKEYID, key_secret: RAZORPAYKEYSECRET });
 
 
 exports.register = async (req, res) => {
@@ -71,7 +74,8 @@ const sendverkey = async (firstname, email, mytoken) => {
     }
 }
 exports.activationKey = async (req, res) => {
-    const token = req.headers["token"];
+    // const token = req.headers["token"];
+    const token = req.body.token
     console.log(token)
     const email = req.body.email
     const user = jwt.verify(token, process.env.VERIFICATIONKEY);
@@ -247,5 +251,31 @@ exports.updateProfile = async (req, res) => {
         console.log(err)
         res.status(400).json(err)
     }
+}
+exports.addPayment = async (req , res)=>{
+   const amount = req.body.amount
+   const options = {
+    amount : amount * 100 ,  // amount in paisa
+    currency : 'INR',
+    receipt : 'hub resolution'
+   }
+   RazorpayInstance.orders.create(options , (err , order) =>{
+    if(!err){
+        res.status(200).send({
+            success:true ,
+            message : "payment done",
+            order_id :order.id, 
+            amount : amount , 
+            key_id : RAZORPAYKEYID, 
+            productName : req.body.productName , 
+            description : req.body.description , 
+            contact : req.body.phone,
+            name : req.body.userName ,
+            email : req.body.email
+        })
+    }else{
+        res.status(400).json({success:false , message : 'something went worng !'})
+    }
+   })
 }
 

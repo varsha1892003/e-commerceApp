@@ -26,6 +26,8 @@ router.post('/frgtpassword' , userController.frgtpassword)
 router.post('/resetpass' ,  userController.resetpass)
 
 router.post('/updateProfile' , upload.single('profilePic') , userController.updateProfile)
+router.post('/addPayment' ,  userController.addPayment)
+
 
 
 

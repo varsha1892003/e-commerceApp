@@ -9,12 +9,12 @@ const newdata = formData.parse()
 
 router.post('/addNotification', newdata , adminAuth , notificationController.addNotification);
 router.post('/addBulkNotification', newdata , adminAuth ,notificationController.addBulkNotification);
-router.post('/RemoveNotication', newdata , adminAuth , notificationController.RemoveNotication);
-router.post('/getOneNotication', newdata ,  notificationController.getOneNotication);
-router.get('/getNotificatons' , auth ,  notificationController.getNotificatons);
-router.get('/updateNotication' , adminAuth ,newdata , notificationController.updateNotication);
-router.get('/updateReadNot' , auth ,newdata , notificationController.updateReadNot);
-router.get('/getUserNotificaton' , auth ,newdata , notificationController.getUserNotificaton);
+router.post('/RemoveNotification', newdata , adminAuth , notificationController.RemoveNotification);
+router.post('/getOneNotification', newdata ,  notificationController.getOneNotification);
+router.get('/getNotifications' , auth ,  notificationController.getNotifications);
+router.post('/updateNotification' , adminAuth ,newdata , notificationController.updateNotification);
+router.post('/updateReadNot' , auth ,newdata , notificationController.updateReadNot);
+router.post('/getUserNotification' , auth ,newdata , notificationController.getUserNotification);
 
 module.exports = router
 

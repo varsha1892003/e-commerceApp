@@ -12,6 +12,7 @@ router.get('/getOrders',adminAuth , orderController.getOrders);
 router.post('/getOrdersByStore',adminAuth , orderController.getOrdersByStore);
 router.post('/updateOrderStatus',adminAuth , orderController.updateOrderStatus);
 router.post('/kanbanData',adminAuth , orderController.kanbanData);
+
 // router.get('/updateKanban',adminAuth , orderController.updateKanban);
 
 

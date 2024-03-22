@@ -17,7 +17,7 @@ exports.addNotification = async (req, res) => {
         res.status(500).json(err)
     }
 }
-
+ 
 exports.addBulkNotification = async (req, res) => {
     try {
         for (let i in req.body.userIds) {
@@ -39,7 +39,7 @@ exports.addBulkNotification = async (req, res) => {
     }
 }
 
-exports.getNotificatons = async (req, res) => {
+exports.getNotifications = async (req, res) => {
     try {
         const mydata = await Notification.find()
         if (mydata) {
@@ -53,7 +53,7 @@ exports.getNotificatons = async (req, res) => {
     }
 }
 
-exports.getOneNotication = async (req, res) => {
+exports.getOneNotification = async (req, res) => {
     try {
         const notificationId = req.body.notificationId
         const mydata = await Notification.findOne({ _id: notificationId })
@@ -68,7 +68,7 @@ exports.getOneNotication = async (req, res) => {
     }
 }
 
-exports.RemoveNotication = async (req, res) => {
+exports.RemoveNotification = async (req, res) => {
     try {
         const notificationId = req.body.notificationId
         const mydata = await Notification.findOneAndDelete({ _id: notificationId })
@@ -83,7 +83,7 @@ exports.RemoveNotication = async (req, res) => {
     }
 }
 
-exports.updateNotication = async (req, res) => {
+exports.updateNotification = async (req, res) => {
     try {
         const notificationId = req.body.notificationId
         const mydata = await Notification.findOneAndUpdate({ _id: notificationId }, {
@@ -123,7 +123,7 @@ exports.updateReadNot = async (req, res) => {
     }
 }
 
-exports.getUserNotificaton = async(req , res)=>{
+exports.getUserNotification = async(req , res)=>{
     try {
         const userId = req.body.userId
         const mydata = await Notification.find({userId : userId})
