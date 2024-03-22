@@ -19,8 +19,8 @@ exports.addSize = async (req, res) => {
 
 exports.updateSize = async(req , res)=>{
     try {
-        const { sizeId , name , available } = req.body
-        const mydata = await Size.findOneAndUpdate({_id : sizeId} , { $set :{name: name , available: available}});
+        const { sizeId , name } = req.body
+        const mydata = await Size.findOneAndUpdate({_id : sizeId} , { $set :{name: name }});
         
         if (mydata) {
             res.json({ message: 'OK', data: "size update succesfully" })

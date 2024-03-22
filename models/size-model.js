@@ -9,10 +9,10 @@ const sizeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    available: {
-        type: Boolean,
-        default: true
-    },
+    // available: {
+    //     type: Boolean,
+    //     default: true
+    // },
 },
     {
         timestamps: true,

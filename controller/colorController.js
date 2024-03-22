@@ -18,8 +18,8 @@ exports.addColor = async (req, res) => {
 
 exports.updateColor = async(req , res)=>{
     try {
-        const { ColorId , name , code ,available } = req.body
-        const mydata = await Color.findOneAndUpdate({_id : ColorId} , { $set :{name: name , available: available , code: code}});
+        const { ColorId , name} = req.body
+        const mydata = await Color.findOneAndUpdate({_id : ColorId} , { $set :{name: name }});
         
         if (mydata) {
             res.json({ message: 'OK', data: "Color update succesfully" })
