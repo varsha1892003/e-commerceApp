@@ -18,8 +18,8 @@ exports.addColor = async (req, res) => {
 
 exports.updateColor = async(req , res)=>{
     try {
-        const { ColorId , name} = req.body
-        const mydata = await Color.findOneAndUpdate({_id : ColorId} , { $set :{name: name }});
+        const { colorId , name} = req.body
+        const mydata = await Color.findOneAndUpdate({_id : colorId} , { $set :{name: name }});
         
         if (mydata) {
             res.json({ message: 'OK', data: "Color update succesfully" })
@@ -34,8 +34,8 @@ exports.updateColor = async(req , res)=>{
 
 exports.removeColor = async(req , res)=>{
     try {
-        const {ColorId} = req.body
-        const mydata = await Color.findOneAndRemove({_id : ColorId});
+        const {colorId} = req.body
+        const mydata = await Color.findOneAndRemove({_id : colorId});
         
         if (mydata) {
             res.json({ message: 'OK', data: "Color remove succesfully" })
