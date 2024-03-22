@@ -16,6 +16,10 @@ const categorySchema = new mongoose.Schema({
     images: {
         type: Array,
     },
+    mainStoreId: {
+        type: String,
+        // required: true,
+    }
 },
     {
         timestamps: true,

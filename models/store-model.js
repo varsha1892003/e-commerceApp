@@ -10,11 +10,9 @@ const storeSchema =  new mongoose.Schema({
     },
     description: {
       type: String,
-      required: true,
     },
     images:{ 
         type : Array, 
-        required: true
     },
     address:{
         type: String
@@ -22,8 +20,12 @@ const storeSchema =  new mongoose.Schema({
     ownerName:{
         type:String,
     },
-    phoneNumber:{
+    phone:{
         type:String
+    },
+    mainStoreId: {
+        type: String,
+        // required: true,
     }
 },
    {

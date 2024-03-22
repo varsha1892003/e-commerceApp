@@ -2,13 +2,9 @@ const express = require('express')
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcryptjs')
-
 const User = require('../models/user-model')
-const Cart = require('../models/cart-model')
-const Category = require('../models/category-model')
-const Order = require('../models/order-model')
-const Product = require('../models/product-model')
-const Store = require('../models/store-model')
+const { env } = require('process');
+const fs = require('fs')
 
 
 exports.register = async (req, res) => {
@@ -23,7 +19,6 @@ exports.register = async (req, res) => {
         res.status(500).json(err)
     }
 }
-
 const sendverkey = async (firstname, email, mytoken) => {
     try {
         const token = jwt.sign({ token: mytoken }, process.env.VERIFICATIONKEY, { expiresIn: '1h' })
@@ -37,30 +32,47 @@ const sendverkey = async (firstname, email, mytoken) => {
                 pass: "soed vmkx khtc yfpx",
             }
         });
-        const mailOptions = {
-            from: "kemin@hubresolution.com",
-            to: email,
-            subject: "for verification email",
-            html: '<p>hy ' + firstname + ', please click the link <a href="' + process.env.newPassPage + token + '/' + email + '">verify email </a> and verify email'
-
-
+        if (email == process.env.ADMINEMAIL) {
+            const mailOptions = {
+                from: "kemin@hubresolution.com",
+                to: email,
+                subject: "for verification email",
+                html: '<p>hy ' + firstname + ', please click the link <a href="' + process.env.adminVerPage + token + '/' + email + '">verify email </a> and verify email'
+            }
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("mail has been send", info.response);
+                }
+            })
         }
-        transporter.sendMail(mailOptions, function (err, info) {
-            if (err) {
-                console.log(err)
+        else {
+            const mailOptions = {
+                from: "kemin@hubresolution.com",
+                to: email,
+                subject: "for verification email",
+                html: '<p>hy ' + firstname + ', please click the link <a href="' + process.env.newVerPage + token + '/' + email + '">verify email </a> and verify email'
             }
-            else {
-                console.log("mail has been send", info.response);
-            }
-        })
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("mail has been send", info.response);
+                }
+            })
+        }
+
     }
     catch (err) {
         console.log(err)
     }
 }
-
 exports.activationKey = async (req, res) => {
     const token = req.headers["token"];
+    console.log(token)
     const email = req.body.email
     const user = jwt.verify(token, process.env.VERIFICATIONKEY);
     if (!user) {
@@ -77,7 +89,6 @@ exports.activationKey = async (req, res) => {
         }
     }
 }
-
 exports.login = async (req, res) => {
     try {
         const email = req.body.email;
@@ -100,140 +111,141 @@ exports.login = async (req, res) => {
         res.status(500).json(err)
     }
 }
-
-exports.getProducts = async (req, res) => {
+const sendsetpass = async (firstname, email, token) => {
     try {
-        const mydata = await Product.find({})
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        } else {
-            res.status(500).json({ message: "no product found" })
-        }
-    } catch (err) {
-        res.status(400).json(err)
-    }
-}
 
-exports.getUserCart = async (req, res) => {
-    try {
-        const userId = req.body.userId
-        const mydata = await Cart.find({ userId: userId })
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        } else {
-            res.status(500).json({ message: "no product found" })
-        }
-    } catch (err) {
-        res.status(400).json(err)
-    }
-}
+        const mytoken = jwt.sign({ token: token }, process.env.VERIFICATIONKEY, { expiresIn: '1h' })
 
-exports.getUserOrder = async (req, res) => {
-    try {
-        const userId = req.body.userId
-        const mydata = await Order.find({ userId: userId })
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        } else {
-            res.status(500).json({ message: "no order found" })
-        }
-    } catch (err) {
-        res.status(400).json(err)
-    }
-}
-
-exports.getOneProduct = async (req, res) => {
-    try {
-        const productId = req.body.productId
-        const mydata = await Product.find({ _id: productId })
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        } else {
-            res.status(500).json({ message: "no Product found" })
-        }
-    } catch (err) {
-        res.status(400).json(err)
-    }
-}
-
-exports.addOrder = async (req, res) => {
-    try {
-        const myorder = new Order({
-            productId: req.body.productId,
-            price: req.body.price,
-            quantity: req.body.quantity,
-            totalAmount: Number(req.body.price) * Number(req.body.quantity),
-            paymentMethod: req.body.paymentMethod,
-            paymentStatus: req.body.paymentStatus,
-            Status: req.body.Status,
-            userId: req.body.userId,
-            phoneNumber: req.body.phoneNumber,
-            address: req.body.address
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: "kemin@hubresolution.com",
+                pass: "soed vmkx khtc yfpx",
+            }
         });
-        const mydata = await myorder.save()
-        if (mydata) {
-            res.json({ message: 'OK', data: "Order add succesfully" })
+        if (email == process.env.ADMINEMAIL) {
+            const mailOptions = {
+                from: "kemin@hubresolution.com",
+                to: email,
+                subject: "for reset password",
+                html: '<p>hy' + firstname + ', please click the link <a href="' + process.env.ADMINRESETPASSPAGE + token + '/' + email + '">reset your passowrd</a> and reset password</p>'
+
+            }
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("mail has been send", info.response);
+                }
+            })
         }
         else {
-            res.json({ message: 'OK', data: "please try again" })
+            const mailOptions = {
+                from: "kemin@hubresolution.com",
+                to: email,
+                subject: "for reset password",
+                html: '<p>hy' + firstname + ', please click the link <a href="' + process.env.RESETPASSPAGE + token + '/' + email + '">reset your passowrd</a> and reset password</p>'
+
+            }
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("mail has been send", info.response);
+                }
+            })
         }
-    } catch (err) {
-        console.log(err)
-        res.status(500).json(err)
+    }
+    catch (err) {
+        res.json({ message: 'OK', data: err })
     }
 }
-
-exports.addCart = async (req, res) => {
+exports.frgtpassword = async (req, res) => {
     try {
-        const mycart = new Cart({
-            userId: req.body.userId,
-            productId: req.body.productId,
-            quantity: req.body.quantity,
-            price: req.body.price,
-            totalPrice: Number(req.body.price) * Number(req.body.quantity)
-        });
-        const mydata = await mycart.save()
-        if (mydata) {
-            res.json({ message: 'OK', data: "Cart add succesfully" })
+        const email = req.body.email;
+        const userdata = await User.findOne({ email: email })
+
+        if (userdata) {
+            const token = userdata.token;
+
+            sendsetpass(userdata.firstName, userdata.email, token)
+
+            return res.json({ message: 'OK', data: "check your email" })
         }
         else {
-            res.json({ message: 'OK', data: "please try again" })
-        }
-    } catch (err) {
-        res.status(500).json(err)
-    }
-}
-
-exports.removeCart = async (req, res) => {
-    try {
-        const cartId = req.body.cartId
-        const mydata = await Cart.findOneAndDelete({ _id: cartId })
-
-        if (mydata) {
-            res.json({ message: 'OK', data: "Cart remove succesfully" })
-        }
-        else {
-            res.json({ message: 'OK', data: "please try again" })
-        }
-    } catch (err) {
-        res.status(500).json(err)
-    }
-}
-
-exports.getProductByCategory = async (req, res) => {
-    try {
-        const categoryId = req.body.categoryId
-        const mydata = await Product.find({ categoryId: categoryId })
-        if (mydata) {
-            res.status(200).json({ message: ok, "data": mydata })
-        }
-        else {
-            res.status(500).json("no product found")
+            res.status(400).json("invalid email address")
         }
     }
     catch (err) {
         console.log(err)
-        res.status(500).json(err)
+        res.status(404).send(err);
+    }
+}
+exports.resetpass = async (req, res) => {
+    const { password, email, token } = req.body;
+    const userdata = await User.findOne({ email: email, token: token })
+    if (userdata) {
+        userdata.password = password
+
+        await userdata.save()
+        return res.json({ message: 'OK', data: "your password reset succesfully" })
+    }
+    else {
+        res.status(400).json("this link has been expired")
     }
 
 }
+exports.updateProfile = async (req, res) => {
+    try {
+        let formdata = JSON.parse(req.body.formdata)
+        let password = await bcrypt.hash(formdata.password, 10)
+        const userId = req.body.userId;
+        let profilepic = null
+        const olddata = await User.findOne({ _id: userId })
+        if (req.file) {
+            if (olddata.profilePic) {
+                const splitimage = olddata.profilePic[0].split('/').pop()
+                let imagePath = './images/userImage/' + splitimage
+                fs.access(imagePath, fs.constants.F_OK, (err) => {
+                    if (err) {
+                        console.error('Image does not exist');
+                    } else {
+                        fs.unlinkSync('./images/userImage/' + splitimage)
+                    }
+                });
+            }
+            profilepic = process.env.USERIMAGE + req.file.filename
+        }
+        else{
+            profilepic = olddata.profilePic
+        }
+        const mydata = await User.findOneAndUpdate({ _id: userId }, {
+            $set: {
+                firstName: formdata.firstName,
+                lastName: formdata.lastName,
+                email: formdata.email,
+                password: password,
+                profilePic: profilepic,
+                phone: formdata.phone,
+                address: formdata.address,
+                gender: formdata.gender
+            }
+        })
+        if (mydata) {
+            res.json({ message: "ok", "data": "user update succesfully" })
+        }
+        else {
+            res.status(500).json({ message: "please try again" })
+        }
+    }
+    catch (err) {
+        console.log(err)
+        res.status(400).json(err)
+    }
+}
+

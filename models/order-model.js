@@ -1,7 +1,6 @@
 var mongoose = require('mongoose')
-var bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
-const mongodb = require('../database/mongodb')
+const mongodb = require('../database/mongodb');
+const { stringify } = require('querystring');
 
 const orderSchema = new mongoose.Schema({
     productId: {
@@ -12,11 +11,13 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    ptice: {
-        type: Number
+    price: {
+        type: Number,
+        default: null
     },
     totalAmount: {
         type: Number,
+        default: null
     },
     paymentMethod: {
         type: String,
@@ -30,21 +31,38 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    firstName : {
+      type: String, 
+    },
+    lastName : {
+        type: String,  
+    },
     phoneNumber: {
         type: Number,
     },
-    Status: {
+    status: {
         type: String,
-        default : "Requested"
+        default: "Requested"
+    },
+    transactionId: {
+        type: String,
+        default: null
+    },
+    promoCode: {
+        type: String,
+        default: null
     },
     address: {
         type: String,
         default: null
     },
+    mainStoreId: {
+        type: String,
+        // required: true,
+    },
 }, {
     timestamps: true,
 })
-
 
 const Order = new mongoose.model("Order", orderSchema)
 module.exports = Order;

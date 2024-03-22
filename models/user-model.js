@@ -35,12 +35,11 @@ const userSchema = new mongoose.Schema({
         default: "FALSE"
     },
     role: {
-        type: String,
-        default: "User",
-        enum: ['Admin', 'User', 'Visitor']
+        type: Number,
+        default: "0",
     },
     profilePic: {
-        type: String,
+        type: Array,
         default: null
     },
     phone: {
@@ -48,8 +47,16 @@ const userSchema = new mongoose.Schema({
         default: null
     },
     address:{
+        type:Array,
+        default :null
+    },
+    gender:{
         type:String,
         default :null
+    },
+    mainStoreId : {
+        type:String,
+        // require :true
     }
 }, {
     timestamps: true,
@@ -64,6 +71,7 @@ userSchema.methods.generateAuthToken = async function () {
 
 userSchema.pre("save", async function (next) {
     if (this.isModified("password")) {
+        console.log("heo")
         this.password = await bcrypt.hash(this.password, 10)
     }
     next()
@@ -71,16 +79,3 @@ userSchema.pre("save", async function (next) {
 
 const User = new mongoose.model("User", userSchema)
 module.exports = User;
-
-
-
-
-
-
-
-
-
-
-
-
-
