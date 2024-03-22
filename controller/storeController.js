@@ -34,7 +34,7 @@ exports.addStore = async (req, res) => {
         res.status(500).json(err)
     }
 }
-exports.getStore = async (req, res) => {
+exports.getStores = async (req, res) => {
     try {
         const mydata = await Store.find()
         if (mydata) {

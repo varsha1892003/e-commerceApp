@@ -74,7 +74,7 @@ exports.cancelOrder = async (req, res) => {
 exports.addOrder = async (req, res) => {
     try {
         const product = await Product.findOne({ _id: req.body.productId })
-        const user = await User.findOne({_id : req.body.userId })
+        const user = await User.findOne({ _id: req.body.userId })
         if (product) {
             const newstock = Number(product.stock) - Number(req.body.quantity);
             if (product.stock > 0 && newstock > 0) {
@@ -87,8 +87,8 @@ exports.addOrder = async (req, res) => {
                     paymentStatus: req.body.paymentStatus,
                     status: req.body.status,
                     userId: req.body.userId,
-                    userName : user.firstName,
-                    lastName : user.lastName,
+                    userName: user.firstName,
+                    lastName: user.lastName,
                     phoneNumber: req.body.phoneNumber,
                     address: req.body.address,
                     transactionId: req.body.transactionId,
@@ -144,284 +144,31 @@ exports.addOrder = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' })
     }
 }
-
-// exports.updateOrderStatus = async (req, res) => {
-//     try {
-//         const orderId = req.body.orderId
-//         const mydata = await Order.findOneAndUpdate({ _id: orderId }, {
-//             $set: {
-//                 status: req.body.status,   // 'Requested', 'processing', 'shipped', 'delivered'
-//                 paymentStatus: req.body.paymentStatus,  // 'pending', 'received '
-//             }
-//         })
-//         if (mydata) {
-//             res.json({ message: 'OK', data: "order update succesfully" })
-//         }
-//         else {
-//             res.json({ message: 'OK', data: "please try again" })
-//         }
-//     } catch (err) {
-//         res.status(500).json(err)
-//     }
-// }
 
 exports.kanbanData = async (req, res) => {
     try {
         const { month , year } = req.body
         let kanbandata = []
         const neworderslist = await Neworders.find()
-        let latesetdata = []
-        if (neworderslist.length > 0) {
-            for (j in neworderslist[0].orderId) {
-                let output = await Order.findOne({ _id: neworderslist[0].orderId[j] })
-                let output2 = await Product.findOne({ _id: output.productId })
-                let listItem = {
-                    "orderData": output,
-                    "productData": output2
-                }
-                latesetdata.push(listItem)
-            }
-        }
-        for (i in neworderslist) {
-            const obj = {
-                "listId": neworderslist[i]._id,
-                "listName": neworderslist[i].listName,
-                "listItems": latesetdata
-            }
-            kanbandata.push(obj)
-        }
-        const intransitlist = await Intransit.find({})
-        let latesetdata2 = []
-        if (intransitlist.length > 0) {
-            for (j in intransitlist[0].orderId) {
-                const output = await Order.findOne({ _id: intransitlist[0].orderId[j] })
-                let output2 = await Product.findOne({ _id: output.productId })
-                let listItem = {
-                    "orderData": output,
-                    "productData": output2
-                }
-                latesetdata2.push(listItem)
-            }
-        }
-        for (i in intransitlist) {
-            const obj2 = {
-                "listId": intransitlist[i]._id,
-                "listName": intransitlist[i].listName,
-                "listItems": latesetdata2
-            }
-            kanbandata.push(obj2)
-            latesetdata2 = []
-        }
-        const Deliveredlist = await Delivered.find({})
-        let latesetdata3 = []
-        if (Deliveredlist.length > 0) {
-            for (j in Deliveredlist[0].orderId) {
-                const output = await Order.findOne({ _id: Deliveredlist[0].orderId[j] })
-                let output2 = await Product.findOne({ _id: output.productId })
-                let listItem = {
-                    "orderData": output,
-                    "productData": output2
-                }
-                latesetdata3.push(listItem)
-            }
-        }
-        for (i in Deliveredlist) {
-            const obj3 = {
-                "listId": Deliveredlist[i]._id,
-                "listName": Deliveredlist[i].listName,
-                "listItems": latesetdata3
-            }
-            kanbandata.push(obj3)
-            latesetdata3 = []
-        }
-        const Shippedlist = await Shipped.find({})
-        let latesetdata4 = []
-        if (Shippedlist.length > 0) {
-            for (j in Shippedlist[0].orderId) {
-                const output = await Order.findOne({ _id: Shippedlist[0].orderId[j] })
-                let output2 = await Product.findOne({ _id: output.productId })
-                let listItem = {
-                    "orderData": output,
-                    "productData": output2
-                }
-                latesetdata4.push(listItem)
-            }
-        }
-        for (i in Shippedlist) {
-            const obj3 = {
-                "listId": Shippedlist[i]._id,
-                "listName": Shippedlist[i].listName,
-                "listItems": latesetdata4
-            }
-            kanbandata.push(obj3)
-            latesetdata3 = []
-        }
+        const obj = await myfilterdata(neworderslist, month, year)
+        kanbandata.push(obj)
+
+        const intransitlist = await Intransit.find()
+        const obj2 = await myfilterdata(intransitlist, month, year)
+        kanbandata.push(obj2)
+
+        const Deliveredlist = await Delivered.find()
+        const obj3 = await myfilterdata(Deliveredlist, month, year)
+        kanbandata.push(obj3)
+
+        const Shippedlist = await Shipped.find()
+        const obj4 = await myfilterdata(Shippedlist, month, year)
+        kanbandata.push(obj4)
+
         res.json({ message: 'OK', data: kanbandata })
     } catch (err) {
+        console.log(err)
         res.status(500).json(err)
-    }
-}
-
-// exports.updateOrderStatus = async (req, res) => {
-//     try {
-//         const { oldListId, orderId, listId } = req.body
-
-//         const upadteddata = await Neworders.findOne({ _id: orderId })
-//         if (!upadteddata) {
-//             const neworders = await new Neworders({ orderId: orderId })
-//             await neworders.save()
-//         }
-
-//         const Intransitdata = await Intransit.findOne({ _id: orderId })
-//         if (!Intransitdata) {
-//             const newintransit = await new Intransit({ orderId: orderId })
-//             await newintransit.save()
-//         }
-      
-//         const Delivereddata = await Delivered.findOne({ _id: orderId })
-//         if (!Delivereddata) {
-//             const newdelivered = await new Delivered()
-//             await newdelivered.save()
-//         }
-
-//         const Shippeddata = await Shipped.findOne({ _id: orderId })
-//         if (Shippeddata) {
-//             const newShipped = await new Shipped()
-//             await newShipped.save()
-//         }
-       
-//         if (upadteddata || Intransitdata || Delivereddata || Shippeddata) {
-//             const isNeworders = await Neworders.findOne({ _id: listId })
-//             if (isNeworders) {
-//                 let olddata = []
-//                 if (isNeworders.orderId) {
-//                     for (j in isNeworders.orderId) {
-//                         olddata.push(isNeworders.orderId[j])
-//                     }
-//                 }
-//                 olddata.push(orderId)
-//                 await Neworders.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata } })
-//             }
-
-//             const isintransit = await Intransit.findOne({ _id: listId })
-//             if (isintransit) {
-//                 let olddata = []
-//                 if (isintransit.orderId) {
-//                     for (j in isintransit.orderId) {
-//                         olddata.push(isintransit.orderId[j])
-//                     }
-//                 }
-//                 olddata.push(orderId)
-//                 await Intransit.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata } })
-//             }
-
-//             const isDelivered = await Delivered.findOne({ _id: listId })
-//             if (isDelivered) {
-//                 let olddata2 = []
-//                 if (isDelivered.orderId) {
-//                     for (j in isDelivered.orderId) {
-//                         olddata2.push(isDelivered.orderId[j])
-//                     }
-//                 }
-//                 olddata2.push(orderId)
-//                 await Delivered.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata2 } })
-//             }
-
-//             const isShipped = await Shipped.findOne({ _id: listId })
-//             if (isShipped) {
-//                 let olddata3 = []
-//                 if (isShipped.orderId) {
-//                     for (j in isShipped.orderId) {
-//                         olddata3.push(isShipped.orderId[j])
-//                     }
-//                 }
-//                 olddata3.push(orderId)
-//                 await Shipped.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata3 } })
-//             }
-
-//             res.json({ message: 'OK', data: "done" })
-//         }
-//         else {
-//             res.json({ message: 'OK', data: "please try again" })
-//         }
-//     }
-//     catch (err) {
-//         console.log(err)
-//         res.status(500).json(err)
-//     }
-// }
-
-exports.addOrder = async (req, res) => {
-    try {
-        const product = await Product.findOne({ _id: req.body.productId })
-        const user = await User.findOne({_id : req.body.userId })
-        if (product) {
-            const newstock = Number(product.stock) - Number(req.body.quantity);
-            if (product.stock > 0 && newstock > 0) {
-                const myorder = new Order({
-                    productId: req.body.productId,
-                    price: product.price,
-                    quantity: req.body.quantity,
-                    totalAmount: req.body.totalAmount,
-                    paymentMethod: req.body.paymentMethod,
-                    paymentStatus: req.body.paymentStatus,
-                    status: req.body.status,
-                    userId: req.body.userId,
-                    userName : user.firstName,
-                    lastName : user.lastName,
-                    phoneNumber: req.body.phoneNumber,
-                    address: req.body.address,
-                    transactionId: req.body.transactionId,
-                    promoCode: req.body.promoCode
-                });
-                const mydata = await myorder.save()
-
-                if (mydata) {
-                    await Product.findOneAndUpdate({ _id: product._id }, { $set: { stock: newstock } })
-                    const isorder = await Neworders.find()
-                    if (isorder.length <= 0) {
-                        const neworders = await new Neworders({ orderId: mydata._id })
-                        const saveneworders = await neworders.save()
-                    } else {
-                        let total = []
-                        const newordersId = await Neworders.findOne()
-                        for (v in newordersId.orderId) {
-                            total.push(newordersId.orderId[v])
-                        }
-                        total.push(mydata._id)
-                        await Neworders.findOneAndUpdate({ _id: newordersId._id }, { $set: { orderId: total } })
-                    }
-
-                    const isintransit = await Intransit.find()
-                    if (isintransit.length <= 0) {
-                        const newintransit = await new Intransit()
-                        await newintransit.save()
-                    }
-
-                    const isDelivered = await Delivered.find()
-                    if (isDelivered.length <= 0) {
-                        const newdelivered = await new Delivered()
-                        await newdelivered.save()
-                    }
-
-                    const isShipped = await Shipped.find()
-                    if (isShipped.length <= 0) {
-                        const newShipped = await new Shipped()
-                        await newShipped.save()
-                    }
-
-                    res.json({ message: 'OK', data: "order add succesfully" })
-                }
-            }
-            else {
-                res.status(400).json("not in stock")
-            }
-        }
-        else {
-            res.status(400).json("please try again product not found")
-        }
-    } catch (error) {
-        return res.status(500).json({ message: 'Internal server error' })
     }
 }
 
@@ -437,7 +184,7 @@ exports.updateOrderStatus = async (req, res) => {
                     latesetdata.push(upadteddata.orderId[i])
                 }
             }
-            await Neworders.findOneAndUpdate({ _id: oldListId}, { $set: { orderId: latesetdata } })
+            await Neworders.findOneAndUpdate({ _id: oldListId }, { $set: { orderId: latesetdata } })
         }
 
         const Intransitdata = await Intransit.findOne({ _id: oldListId })
@@ -449,8 +196,9 @@ exports.updateOrderStatus = async (req, res) => {
                 }
             }
             await Intransit.findOneAndUpdate({ _id: oldListId }, { $set: { orderId: latesetdata2 } })
+
         }
-      
+
         const Delivereddata = await Delivered.findOne({ _id: oldListId })
         if (Delivereddata) {
             let latesetdata3 = []
@@ -459,7 +207,8 @@ exports.updateOrderStatus = async (req, res) => {
                     latesetdata3.push(Delivereddata.orderId[i])
                 }
             }
-           await Delivered.findOneAndUpdate({ _id: oldListId }, { $set: { orderId: latesetdata3 } })
+            await Delivered.findOneAndUpdate({ _id: oldListId }, { $set: { orderId: latesetdata3 } })
+
         }
 
         const Shippeddata = await Shipped.findOne({ _id: oldListId })
@@ -471,8 +220,9 @@ exports.updateOrderStatus = async (req, res) => {
                 }
             }
             await Shipped.findOneAndUpdate({ _id: oldListId }, { $set: { orderId: latesetdata4 } })
+
         }
-       
+
         if (upadteddata || Intransitdata || Delivereddata || Shippeddata) {
             const isNeworders = await Neworders.findOne({ _id: listId })
             if (isNeworders) {
@@ -484,6 +234,8 @@ exports.updateOrderStatus = async (req, res) => {
                 }
                 olddata.push(orderId)
                 await Neworders.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata } })
+                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "Requested" } })
+
             }
 
             const isintransit = await Intransit.findOne({ _id: listId })
@@ -496,6 +248,8 @@ exports.updateOrderStatus = async (req, res) => {
                 }
                 olddata.push(orderId)
                 await Intransit.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata } })
+                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "Intransit" } })
+
             }
 
             const isDelivered = await Delivered.findOne({ _id: listId })
@@ -508,6 +262,8 @@ exports.updateOrderStatus = async (req, res) => {
                 }
                 olddata2.push(orderId)
                 await Delivered.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata2 } })
+                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "Delivered" } })
+
             }
 
             const isShipped = await Shipped.findOne({ _id: listId })
@@ -520,6 +276,7 @@ exports.updateOrderStatus = async (req, res) => {
                 }
                 olddata3.push(orderId)
                 await Shipped.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata3 } })
+                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "Shipped" } })
             }
 
             res.json({ message: 'OK', data: "done" })
@@ -533,3 +290,47 @@ exports.updateOrderStatus = async (req, res) => {
         res.status(500).json(err)
     }
 }
+
+function myfilterdata(mylist, month, year) {
+    return new Promise(async resolve => {
+        try {
+            let latesetdata = []
+            if (mylist.length > 0) {
+                for (j in mylist[0].orderId) {
+                    await Order.find({
+                        $and: [
+                            {
+                                _id: mylist[0].orderId[j]
+                            }],
+                        $expr: {
+                            $and: [
+                                { $eq: [{ $month: '$createdAt' }, month] },
+                                { $eq: [{ $year: '$createdAt' }, year] }
+                            ]
+                        }
+                    }).then(async function (timedata) {
+                        for (let k in timedata) {
+                            let output2 = await Product.findOne({ _id: timedata[k].productId })
+                            let listItem = {
+                                "orderData": timedata[k],
+                                "productData": output2
+                            }
+                            latesetdata.push(listItem)
+                        }
+                    })
+                }
+            }
+            const obj = {
+                "listId": mylist[0]._id,
+                "listName": mylist[0].listName,
+                "listItems": latesetdata
+            }
+            resolve(obj)
+        }
+        catch (e) {
+            console.log(e)
+        }
+    })
+}
+
+

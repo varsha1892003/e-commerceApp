@@ -6,8 +6,8 @@ const { env } = require('process');
 
 exports.getUsers = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainstoreid 
-        const mydata = await User.find({mainStoreId: mainStoreId})
+        const mainStoreId = req.headers.mainstoreid
+        const mydata = await User.find({ mainStoreId: mainStoreId })
         if (mydata) {
             res.json({ message: "ok", "data": mydata })
         } else {
@@ -18,15 +18,15 @@ exports.getUsers = async (req, res) => {
     }
 }
 
-exports.addUser = async(req , res)=>{
+exports.addUser = async (req, res) => {
     try {
         const myuser = new User(req.body);
         await myuser.generateAuthToken();
         const mydata = await myuser.save()
-        if(mydata){
-        res.json({ message: 'OK', data: "user created" })
+        if (mydata) {
+            res.json({ message: 'OK', data: "user created" })
         }
-        else{
+        else {
             res.status(400).json("please try again")
         }
     } catch (err) {
@@ -34,54 +34,51 @@ exports.addUser = async(req , res)=>{
     }
 }
 
-exports.removeUser = async(req, res)=>{
-    try{
+exports.removeUser = async (req, res) => {
+    try {
         const userId = req.body.userId;
-        const mydata = await User.findOneAndDelete({_id:userId})
-        if(mydata){
-            res.json({ message: "ok", "data": "user remove succesfully"})
+        const mydata = await User.findOneAndDelete({ _id: userId })
+        if (mydata) {
+            res.json({ message: "ok", "data": "user remove succesfully" })
         }
-        else{
-            res.status(500).json({message : "please try again"})
+        else {
+            res.status(500).json({ message: "please try again" })
         }
     }
-    catch(err){
+    catch (err) {
         res.status(400).json(err)
     }
 }
 
-exports.getOneUser = async(req , res)=>{
-    try{
+exports.getOneUser = async (req, res) => {
+    try {
         const userId = req.body.userId;
-        const mydata = await User.findOne({_id:userId})
-        console.log(mydata)
-        if(mydata){
-            res.json({ message: "ok", "data": mydata})
+        const mydata = await User.findOne({ _id: userId })
+        if (mydata) {
+            res.json({ message: "ok", "data": mydata })
         }
-        else{
-            res.status(500).json({message : "please try again"})
+        else {
+            res.status(500).json({ message: "please try again" })
         }
     }
-    catch(err){
+    catch (err) {
         res.status(400).json(err)
     }
 }
 
-exports.addMainStore = async(req , res)=>{
-    try{
-  
-      const mydata = new MainStore({
-        mainStoreName : req.body.mainStoreName
-    })
-     const savedata = await mydata.save() 
-      if(savedata){
-       
-        res.status(200).json({message : "ok" , data :"main store created"})
-      }else{
-        res.status(400).json("please try again")
-      }
-    }catch(err){
-        console.log(err)
-       res.status(500).json(err)
+exports.addMainStore = async (req, res) => {
+    try {
+
+        const mydata = new MainStore({
+            mainStoreName: req.body.mainStoreName
+        })
+        const savedata = await mydata.save()
+        if (savedata) {
+            res.status(200).json({ message: "ok", data: "main store created" })
+        } else {
+            res.status(400).json("please try again")
+        }
+    } catch (err) {
+        res.status(500).json(err)
     }
 }

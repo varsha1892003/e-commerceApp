@@ -20,7 +20,7 @@ const upload2 = multer({storage :storage2})
 
 // store api 
 router.post('/addStore', adminAuth ,  upload2.array('images' ,10) , storeController.addStore);
-router.get('/getStore',  storeController.getStore);
+router.get('/getStores',  storeController.getStores);
 router.post('/getStoreByStore',  storeController.getStoreByStore);
 router.post('/updateStore', upload2.array('images' ,10) ,adminAuth ,  storeController.updateStore);
 router.post('/removeStore', newdata ,adminAuth ,  storeController.removeStore);

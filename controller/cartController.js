@@ -56,6 +56,8 @@ exports.addCart = async (req, res) => {
             if (updateddata) {
                 await Product.findOneAndUpdate({ _id: req.body.productId }, { $set: { cart: carttrue } })
                 res.status(200).json("cart update")
+            } else {
+                res.status(400).json("product not add in cart")
             }
         }
     } catch (err) {
@@ -68,17 +70,21 @@ exports.getUserCart = async (req, res) => {
         const userId = req.body.userId
         const finaldata = []
         const usercart = await Cart.findOne({ userId: userId })
-        for (let i in usercart.productData) {
-            const newd = {
-                "product": '',
-                "quantity": ''
+        if (usercart) {
+            for (let i in usercart.productData) {
+                const newd = {
+                    "product": '',
+                    "quantity": ''
+                }
+                const productData = await Product.findOne({ _id: usercart.productData[i].productId })
+                newd.product = productData
+                newd.quantity = usercart.productData[i].productQuantity
+                finaldata.push(newd)
             }
-            const productData = await Product.findOne({ _id: usercart.productData[i].productId })
-            newd.product = productData
-            newd.quantity = usercart.productData[i].productQuantity
-            finaldata.push(newd)
+            res.status(200).json({ message: "ok", data: finaldata })
+        } else {
+            res.status(200).json("please try again")
         }
-        res.status(200).json({ message: "ok", data: finaldata })
 
     } catch (err) {
         console.log(err)
