@@ -6,8 +6,8 @@ const { env } = require('process');
 
 exports.getUsers = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainstoreid
-        const mydata = await User.find({ mainStoreId: mainStoreId })
+        // const mainStoreId = req.headers.mainstoreid
+        const mydata = await User.find()
         if (mydata) {
             res.json({ message: "ok", "data": mydata })
         } else {

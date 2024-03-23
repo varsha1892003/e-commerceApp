@@ -4,7 +4,7 @@ const Store = require('../models/store-model')
 const { env } = require('process');
 
 exports.addStore = async (req, res) => {
-    const mainStoreId = req.headers.mainstoreid 
+    // const mainStoreId = req.headers.mainstoreid 
     let formdata = JSON.parse(req.body.formData)
     try {
         let allfile = []
@@ -20,7 +20,7 @@ exports.addStore = async (req, res) => {
             ownerName: formdata.ownerName,
             phone: formdata.phone,
             images: allfile,
-            mainStoreId:mainStoreId
+            // mainStoreId:mainStoreId
         });
         const mydata = await mystore.save()
         if (mydata) {

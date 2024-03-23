@@ -5,7 +5,7 @@ const { env } = require('process');
 
 exports.addCategory = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainstoreid 
+        // const mainStoreId = req.headers.mainstoreid 
         let formdata = JSON.parse(req.body.formData)
         let myfile = null
         if (req.file) {
@@ -15,7 +15,7 @@ exports.addCategory = async (req, res) => {
             categoryName: formdata.categoryName,
             description: formdata.description,
             images: myfile,
-            mainStoreId:mainStoreId
+            // mainStoreId:mainStoreId
         });
         const mydata = await mycategory.save()
         if (mydata) {
@@ -76,7 +76,7 @@ exports.removeCategory = async (req, res) => {
         if(category.images){
         const splitimage = category.images[0].split('/').pop()
         const imagePath = './images/categoryImage/' + splitimage
-
+        console.log(imagePath)
         fs.access(imagePath, fs.constants.F_OK, (err) => {
             if (err) {
                 console.error('Image does not exist');

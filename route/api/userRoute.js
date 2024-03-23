@@ -24,8 +24,11 @@ router.post('/login' ,  userController.login)
 
 router.post('/frgtpassword' , userController.frgtpassword)
 router.post('/resetpass' ,  userController.resetpass)
+router.post('/getUserProfile' ,  userController.getUserProfile)
+router.post('/addAddress' ,  userController.addAddress)
 
 router.post('/updateProfile' , upload.single('profilePic') , userController.updateProfile)
 router.post('/addPayment' ,  userController.addPayment)
+
 
 module.exports = router

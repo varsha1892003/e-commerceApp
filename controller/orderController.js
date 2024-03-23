@@ -10,9 +10,9 @@ const User = require('../models/user-model')
 
 exports.getUserOrder = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainstoreid
+        // const mainStoreId = req.headers.mainstoreid
         const userId = req.body.userId
-        const mydata = await Order.find({ userId: userId, mainStoreId: mainStoreId })
+        const mydata = await Order.find({ userId: userId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {

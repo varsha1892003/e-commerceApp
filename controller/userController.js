@@ -6,8 +6,8 @@ const User = require('../models/user-model')
 const { env } = require('process');
 const fs = require('fs')
 const Razorpay = require('razorpay');
-const { RAZORPAYKEYID, RAZORPAYKEYSECRET } = process.env
-// var RazorpayInstance = new Razorpay({ key_id: RAZORPAYKEYID, key_secret: RAZORPAYKEYSECRET });
+const { RAZORPAYTESTKEYID, RAZORPAYTESTKEYSECRET } = process.env
+var razorpay = new Razorpay({ key_id: RAZORPAYTESTKEYID, key_secret: RAZORPAYTESTKEYSECRET });
 
 
 exports.register = async (req, res) => {
@@ -253,29 +253,65 @@ exports.updateProfile = async (req, res) => {
     }
 }
 exports.addPayment = async (req, res) => {
-    const amount = req.body.amount
-    const options = {
-        amount: amount * 100,  // amount in paisa
-        currency: 'INR',
-        receipt: 'hub resolution'
+    try {
+        const order = await testCreateOrder();
+        console.log(order)
+        await testFetchOrder(order.id);
+        res.json({message : "ok" , data : order})
+    } catch (error) {
+        res.status(500).json(err)
+        console.error('Error testing order flow:', error);
     }
-    RazorpayInstance.orders.create(options, (err, order) => {
-        if (!err) {
-            res.status(200).send({
-                success: true,
-                message: "payment done",
-                order_id: order.id,
-                amount: amount,
-                key_id: RAZORPAYKEYID,
-                productName: req.body.productName,
-                description: req.body.description,
-                phone: req.body.phone,
-                userName: req.body.userName,
-                email: req.body.email
-            })
-        } else {
-            res.status(400).json({ success: false, message: 'something went worng !' })
-        }
-    })
 }
+exports.getUserProfile = async(req , res)=>{
+    try{
+    const mydata = await User.find({_id :req.body.userId})
+    if(mydata){
+        res.json({message : "ok" , data : mydata})
+    }
+    }
+    catch(err){
+        res.status(500).json(err)
+    }
+}
+exports.addAddress = async(req , res)=>{
+    try{
+    const { userId , address } = req.body 
+    const userdata = await User.findOneAndUpdate({_id : userId} , {$set : {address : address}})
+    if(userdata){
+        res.status(200).json({message : "ok" , data: "address add succesfully"})
+    } 
+    else {
+        res.status(400).json("please try again")
+    }
+} catch(err) {
+    console.log(err)
+    res.status(500).json(err)
+}
+}
+async function testCreateOrder() {
+    const amount = 100;
+    const currency = 'INR';
+    try {
+        const options = {
+            amount: amount,
+            currency: currency,
+            receipt: 'order_rcptid_11'
+        };
+
+        const order = await razorpay.orders.create(options);
+        console.log('Test order created:', order);
+    } catch (error) {
+        console.error('Error creating test order:', error);
+    }
+}
+async function testFetchOrder(orderId) {
+    try {
+        const order = await razorpay.orders.fetch(orderId);
+        console.log('Test order fetched:', order);
+    } catch (error) {
+        console.error('Error fetching test order:', error);
+    }
+}
+
 

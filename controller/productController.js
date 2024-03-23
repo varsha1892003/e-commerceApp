@@ -6,7 +6,7 @@ const Category = require('../models/category-model')
 
 exports.addProduct = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainstoreid
+        // const mainStoreId = "null"
         const formdata = JSON.parse(req.body.formData)
         const storedata = await Store.findOne({ _id: formdata.storeId })
 
@@ -32,7 +32,7 @@ exports.addProduct = async (req, res) => {
             size: formdata.size,
             color: formdata.color,
             images: allfile,
-            mainStoreId: mainStoreId
+            // mainStoreId: mainStoreId
         });
         const mydata = await product.save()
         if (mydata) {
@@ -201,7 +201,7 @@ exports.getProductByCategoryByStore = async (req, res) => {
 exports.getProductByFilter = async (req, res) => {
     try {
         const alldata = []
-        const mainStoreId = req.headers.mainstoreid 
+        // const mainStoreId = req.headers.mainstoreid 
         let query = {};
        
         if (req.body && req.body.pricefrom && req.body.priceto) {
