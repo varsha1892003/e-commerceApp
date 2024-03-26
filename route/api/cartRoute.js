@@ -7,7 +7,7 @@ const formData = require('express-form-data');
 const newdata = formData.parse()
 
 // cart api 
-router.post('/addCart',  cartController.addCart);
+router.post('/addCart', auth ,  cartController.addCart);
 router.post('/getUserCart' ,auth , cartController.getUserCart);
 router.post('/removeCart',auth , cartController.removeCart);
 router.post('/updateCartQuantity', auth , cartController.updateCartQuantity);

@@ -71,6 +71,8 @@ exports.updateProduct = async (req, res) => {
                 discount: formdata.discount,
                 stock: formdata.stock,
                 discountPrice: formdata.discountPrice,
+                size: formdata.size,
+                color : formdata.color,
                 images: allfile
             }
         })

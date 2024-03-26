@@ -282,9 +282,9 @@ exports.addAddress = async (req, res) => {
 exports.createOrderInRp = async (req, res) => {
     try {
 
-        const amount = req.body.amount * 100 
+        const amount = Number(req.body.amount) * 100 
         const order = await testCreateOrder(amount)
-        await testFetchOrder(order.id);
+        // await testFetchOrder(order.id);
         res.json({ message: "ok", data: order })
     } catch (err) {
         res.status(500).json(err)
@@ -307,16 +307,17 @@ async function testCreateOrder(amount) {
         return error
     }
 }
-async function testFetchOrder(orderId) {
-    try {
-        const order = await razorpay.orders.fetch(orderId);
-        return order
-    } catch (error) {
-        console.error('Error fetching test order:', error);
-        return error
-    }
-}
+// async function testFetchOrder(orderId) {
+//     try {
+//         const order = await razorpay.orders.fetch(orderId);
+//         return order
+//     } catch (error) {
+//         console.error('Error fetching test order:', error);
+//         return error
+//     }
+// }
 exports.verifyPayment = async (req, res) => {
+    console.log(verifyPayment)
     let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
     var verifysign = crypto.createHmac('sha256', process.env.RAZORPAYTESTKEYSECRET)
         .update(body.toString())

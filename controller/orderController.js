@@ -7,6 +7,11 @@ const Delivered = require('../models/delivered-model')
 const Neworders = require('../models/neworders-model')
 const Shipped = require('../models/shipped-model')
 const User = require('../models/user-model')
+const Razorpay = require('razorpay');
+var crypto = require('crypto');
+const Cart = require('../models/cart-model');
+const { RAZORPAYTESTKEYID, RAZORPAYTESTKEYSECRET } = process.env
+var razorpay = new Razorpay({ key_id: RAZORPAYTESTKEYID, key_secret: RAZORPAYTESTKEYSECRET });
 
 exports.getUserOrder = async (req, res) => {
     try {
@@ -75,13 +80,11 @@ exports.addOrder = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.body.userId })
         let transactionData = null
-        console.log(req.body.transactionData[0].razorpay_order_id)
-        const fetch = await testFetchOrder(req.body.transactionData[0].razorpay_order_id);
+        const fetch = await testFetchOrder(req.body.transactionData.razorpay_order_id);
         if (fetch) {
             transactionData = req.body.transactionData
         }
         const orderData = req.body.orderData
-        console.log(orderData)
         for (let i in orderData) {
             const data = orderData[i]
             const product = await Product.findOne({ _id: data.productId })
@@ -90,7 +93,7 @@ exports.addOrder = async (req, res) => {
                     productId: data.productId,
                     price: product.price,
                     quantity: data.quantity,
-                    totalAmount: req.body.totalAmount,
+                    totalAmount: product.price,
                     paymentMethod: "online",
                     paymentStatus: "paid",
                     status: "completed",
@@ -105,8 +108,9 @@ exports.addOrder = async (req, res) => {
                 const mydata = await myorder.save()
 
                 if (mydata) {
+                    console.log("if")
                     const newstock = Number(product.stock) - Number(data.quantity)
-                    await Product.findOneAndUpdate({ _id: product._id }, { $set: { stock: newstock } })
+                    await Product.findOneAndUpdate({ _id: product._id }, { $set: { stock: newstock, cart: "false" } })
                     const isorder = await Neworders.find()
                     if (isorder.length <= 0) {
                         const neworders = await new Neworders({ orderId: mydata._id })
@@ -138,13 +142,25 @@ exports.addOrder = async (req, res) => {
                         const newShipped = await new Shipped()
                         await newShipped.save()
                     }
+
+                    const cartdata = await Cart.findOne({ userId: req.body.userId })
+                    if (cartdata) {
+                        let removecart = []
+                        for (let i in cartdata.productData) {
+
+                            if (cartdata.productData[i].productId != data.productId) {
+                                removecart.push(cartdata.productData[i])
+                            }
+                        }
+                        await Cart.findOneAndUpdate({ _id: cartdata._id }, { $set: { productData: removecart } })
+                    }
                 }
             }
-            res.json({ message: 'OK', data: "order add succesfully" })
         }
-
+        res.json({ message: 'OK', data: "order add succesfully" })
 
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: 'Internal server error' })
     }
 }
@@ -171,13 +187,13 @@ exports.kanbanData = async (req, res) => {
         const obj2 = await myfilterdata(intransitlist, month, year)
         kanbandata.push(obj2)
 
-        const Deliveredlist = await Delivered.find()
-        const obj3 = await myfilterdata(Deliveredlist, month, year)
-        kanbandata.push(obj3)
-
         const Shippedlist = await Shipped.find()
         const obj4 = await myfilterdata(Shippedlist, month, year)
         kanbandata.push(obj4)
+
+        const Deliveredlist = await Delivered.find()
+        const obj3 = await myfilterdata(Deliveredlist, month, year)
+        kanbandata.push(obj3)
 
         res.json({ message: 'OK', data: kanbandata })
     } catch (err) {
@@ -345,6 +361,18 @@ function myfilterdata(mylist, month, year) {
             console.log(e)
         }
     })
+}
+
+exports.getUserOrderStatus = async (req, res) => {
+    try {
+        const userId = req.body.userId
+        const mydata = await Order.find({ userId: userId })
+        res.json({ message: "ok", data: mydata })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
 }
 
 
