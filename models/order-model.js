@@ -44,8 +44,8 @@ const orderSchema = new mongoose.Schema({
         type: String,
         default: "Requested"
     },
-    transactionId: {
-        type: String,
+    transactionData: {
+        type: Object,
         default: null
     },
     promoCode: {
@@ -60,6 +60,10 @@ const orderSchema = new mongoose.Schema({
         type: String,
         // required: true,
     },
+    transactionData:{
+        type:Array,
+        require:true
+    }
 }, {
     timestamps: true,
 })

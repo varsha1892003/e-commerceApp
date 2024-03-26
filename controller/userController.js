@@ -6,6 +6,7 @@ const User = require('../models/user-model')
 const { env } = require('process');
 const fs = require('fs')
 const Razorpay = require('razorpay');
+var crypto = require('crypto')
 const { RAZORPAYTESTKEYID, RAZORPAYTESTKEYSECRET } = process.env
 var razorpay = new Razorpay({ key_id: RAZORPAYTESTKEYID, key_secret: RAZORPAYTESTKEYSECRET });
 
@@ -252,45 +253,45 @@ exports.updateProfile = async (req, res) => {
         res.status(400).json(err)
     }
 }
-exports.addPayment = async (req, res) => {
+exports.getUserProfile = async (req, res) => {
     try {
-        const order = await testCreateOrder();
-        console.log(order)
+        const mydata = await User.findOne({ _id: req.body.userId })
+        if (mydata) {
+            res.json({ message: "ok", data: mydata })
+        }
+    }
+    catch (err) {
+        res.status(500).json(err)
+    }
+}
+exports.addAddress = async (req, res) => {
+    try {
+        const { userId, address } = req.body
+        const userdata = await User.findOneAndUpdate({ _id: userId }, { $set: { address: address } })
+        if (userdata) {
+            res.status(200).json({ message: "ok", data: "address add succesfully" })
+        }
+        else {
+            res.status(400).json("please try again")
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
+}
+exports.createOrderInRp = async (req, res) => {
+    try {
+
+        const amount = req.body.amount * 100 
+        const order = await testCreateOrder(amount)
         await testFetchOrder(order.id);
-        res.json({message : "ok" , data : order})
-    } catch (error) {
+        res.json({ message: "ok", data: order })
+    } catch (err) {
         res.status(500).json(err)
-        console.error('Error testing order flow:', error);
+        console.error('Error testing order flow:', err);
     }
 }
-exports.getUserProfile = async(req , res)=>{
-    try{
-    const mydata = await User.find({_id :req.body.userId})
-    if(mydata){
-        res.json({message : "ok" , data : mydata})
-    }
-    }
-    catch(err){
-        res.status(500).json(err)
-    }
-}
-exports.addAddress = async(req , res)=>{
-    try{
-    const { userId , address } = req.body 
-    const userdata = await User.findOneAndUpdate({_id : userId} , {$set : {address : address}})
-    if(userdata){
-        res.status(200).json({message : "ok" , data: "address add succesfully"})
-    } 
-    else {
-        res.status(400).json("please try again")
-    }
-} catch(err) {
-    console.log(err)
-    res.status(500).json(err)
-}
-}
-async function testCreateOrder() {
-    const amount = 100;
+async function testCreateOrder(amount) {
     const currency = 'INR';
     try {
         const options = {
@@ -300,18 +301,32 @@ async function testCreateOrder() {
         };
 
         const order = await razorpay.orders.create(options);
-        console.log('Test order created:', order);
+        return order
     } catch (error) {
         console.error('Error creating test order:', error);
+        return error
     }
 }
 async function testFetchOrder(orderId) {
     try {
         const order = await razorpay.orders.fetch(orderId);
-        console.log('Test order fetched:', order);
+        return order
     } catch (error) {
         console.error('Error fetching test order:', error);
+        return error
     }
+}
+exports.verifyPayment = async (req, res) => {
+    let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
+    var verifysign = crypto.createHmac('sha256', process.env.RAZORPAYTESTKEYSECRET)
+        .update(body.toString())
+        .digest('hex');
+    console.log("sig received", req.body.response.razorpay_signature)
+    console.log("sig genrated", verifysign)
+    var response = { "signatureIsValid": "false" }
+    if (verifysign == req.body.response.razorpay_signature)
+        response = { "signatureIsValid": "true" }
+    res.send(response)
 }
 
 

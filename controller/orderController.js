@@ -12,7 +12,7 @@ exports.getUserOrder = async (req, res) => {
     try {
         // const mainStoreId = req.headers.mainstoreid
         const userId = req.body.userId
-        const mydata = await Order.find({ userId: userId})
+        const mydata = await Order.find({ userId: userId })
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
@@ -73,35 +73,44 @@ exports.cancelOrder = async (req, res) => {
 
 exports.addOrder = async (req, res) => {
     try {
-        const product = await Product.findOne({ _id: req.body.productId })
         const user = await User.findOne({ _id: req.body.userId })
-        if (product) {
-            const newstock = Number(product.stock) - Number(req.body.quantity);
-            if (product.stock > 0 && newstock > 0) {
+        let transactionData = null
+        console.log(req.body.transactionData[0].razorpay_order_id)
+        const fetch = await testFetchOrder(req.body.transactionData[0].razorpay_order_id);
+        if (fetch) {
+            transactionData = req.body.transactionData
+        }
+        const orderData = req.body.orderData
+        console.log(orderData)
+        for (let i in orderData) {
+            const data = orderData[i]
+            const product = await Product.findOne({ _id: data.productId })
+            if (product) {
                 const myorder = new Order({
-                    productId: req.body.productId,
+                    productId: data.productId,
                     price: product.price,
-                    quantity: req.body.quantity,
+                    quantity: data.quantity,
                     totalAmount: req.body.totalAmount,
-                    paymentMethod: req.body.paymentMethod,
-                    paymentStatus: req.body.paymentStatus,
-                    status: req.body.status,
+                    paymentMethod: "online",
+                    paymentStatus: "paid",
+                    status: "completed",
                     userId: req.body.userId,
-                    userName: user.firstName,
+                    firstName: user.firstName,
                     lastName: user.lastName,
                     phoneNumber: req.body.phoneNumber,
                     address: req.body.address,
-                    transactionId: req.body.transactionId,
-                    promoCode: req.body.promoCode
+                    promoCode: req.body.promoCode,
+                    transactionData: transactionData
                 });
                 const mydata = await myorder.save()
 
                 if (mydata) {
+                    const newstock = Number(product.stock) - Number(data.quantity)
                     await Product.findOneAndUpdate({ _id: product._id }, { $set: { stock: newstock } })
                     const isorder = await Neworders.find()
                     if (isorder.length <= 0) {
                         const neworders = await new Neworders({ orderId: mydata._id })
-                        const saveneworders = await neworders.save()
+                        await neworders.save()
                     } else {
                         let total = []
                         const newordersId = await Neworders.findOne()
@@ -129,25 +138,30 @@ exports.addOrder = async (req, res) => {
                         const newShipped = await new Shipped()
                         await newShipped.save()
                     }
-
-                    res.json({ message: 'OK', data: "order add succesfully" })
                 }
             }
-            else {
-                res.status(400).json("not in stock")
-            }
+            res.json({ message: 'OK', data: "order add succesfully" })
         }
-        else {
-            res.status(400).json("please try again product not found")
-        }
+
+
     } catch (error) {
         return res.status(500).json({ message: 'Internal server error' })
     }
 }
 
+async function testFetchOrder(orderId) {
+    try {
+        const order = await razorpay.orders.fetch(orderId);
+        return order
+    } catch (error) {
+        console.error('Error fetching test order:', error);
+        return error
+    }
+}
+
 exports.kanbanData = async (req, res) => {
     try {
-        const { month , year } = req.body
+        const { month, year } = req.body
         let kanbandata = []
         const neworderslist = await Neworders.find()
         const obj = await myfilterdata(neworderslist, month, year)

@@ -12,7 +12,7 @@ exports.addPromoCode = async (req, res) => {
             description: req.body.description,
             expireDate: req.body.expireDate,
             isActive: req.body.isActive,
-            mainstoreid: req.body.mainstoreid
+            // mainstoreid: req.body.mainstoreid
         });
         const mydata = await mypromocode.save()
         if (mydata) {
@@ -22,7 +22,12 @@ exports.addPromoCode = async (req, res) => {
             res.json({ message: 'OK', data: "please try again" })
         }
     } catch (err) {
-        res.status(500).json(err)
+        if (err.name === 'MongoServerError' && err.code === 11000) {
+            return res.status(422).send({ succes: false, message: 'please enter unique promocode' });
+        }
+        else {
+            res.status(500).json(err)
+        }
     }
 }
 exports.getPromoCodes = async (req, res) => {
@@ -94,7 +99,20 @@ exports.removePromoCode = async (req, res) => {
         res.status(500).json(err)
     }
 }
+exports.searchPromoCode = async (req, res) => {
+    try {
+        const code = req.body.Promocode
+        console.log(code)
 
-
-
-  
+        const mydata = await Promocode.findOne({ code: code })
+        console.log(mydata)
+        if (mydata) {
+            res.json({ message: 'OK', data: mydata })
+        }
+        else {
+            res.json({ message: 'OK', data: "please try again" })
+        }
+    } catch (err) {
+        res.status(500).json(err)
+    }
+}

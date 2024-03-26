@@ -28,7 +28,9 @@ router.post('/getUserProfile' ,  userController.getUserProfile)
 router.post('/addAddress' ,  userController.addAddress)
 
 router.post('/updateProfile' , upload.single('profilePic') , userController.updateProfile)
-router.post('/addPayment' ,  userController.addPayment)
+router.post('/createOrderInRp' ,  userController.createOrderInRp)
+router.post('/verifyPayment' ,  userController.verifyPayment)
+
 
 
 module.exports = router
