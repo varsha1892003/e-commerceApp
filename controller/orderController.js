@@ -121,8 +121,9 @@ exports.addOrder = async (req, res) => {
                     await addpayment.save()
                     
                     const promocodeData = await Promocode.findOne({code:req.body.promoCode}) 
-                    const isusercode = await UserCode.findOne({  userId : req.body.userId , promoCodeId : promocodeData._id,})
-                    if(isusercode){
+                    console.log(promocodeData)
+                    const isusercode = await UserCode.findOne({  userId : req.body.userId , promoCodeId : promocodeData._id})
+                    if(isusercode == null && req.body.promoCode != null){
                     const usercode = new UserCode({
                         userId : req.body.userId,
                         promoCodeId : promocodeData._id,
@@ -395,5 +396,4 @@ exports.getUserOrderStatus = async (req, res) => {
         res.status(500).json(err)
     }
 }
-
 
