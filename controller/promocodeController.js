@@ -1,6 +1,7 @@
 const express = require('express')
 const { env } = require('process');
 const Promocode = require('../models/promocode-model');
+const UserCode = require('../models/userCode-model');
 
 exports.addPromoCode = async (req, res) => {
     try {
@@ -102,15 +103,16 @@ exports.removePromoCode = async (req, res) => {
 exports.searchPromoCode = async (req, res) => {
     try {
         const code = req.body.Promocode
-        console.log(code)
+        const userId = req.body.userId
 
         const mydata = await Promocode.findOne({ code: code })
-        console.log(mydata)
-        if (mydata) {
+        const usercode = await UserCode.findOne({PromocodeId : mydata._id , userId: userId})
+
+        if (!usercode) {
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.json({ message: 'OK', data: "please try again" })
+            res.json({ message: 'OK', data: "you are not able to user promocode"})
         }
     } catch (err) {
         res.status(500).json(err)

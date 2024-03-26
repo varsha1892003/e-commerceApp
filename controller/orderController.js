@@ -7,9 +7,12 @@ const Delivered = require('../models/delivered-model')
 const Neworders = require('../models/neworders-model')
 const Shipped = require('../models/shipped-model')
 const User = require('../models/user-model')
+const Payment = require('../models/payment-model')
 const Razorpay = require('razorpay');
 var crypto = require('crypto');
 const Cart = require('../models/cart-model');
+const UserCode = require('../models/userCode-model');
+const Promocode = require('../models/promocode-model');
 const { RAZORPAYTESTKEYID, RAZORPAYTESTKEYSECRET } = process.env
 var razorpay = new Razorpay({ key_id: RAZORPAYTESTKEYID, key_secret: RAZORPAYTESTKEYSECRET });
 
@@ -108,7 +111,25 @@ exports.addOrder = async (req, res) => {
                 const mydata = await myorder.save()
 
                 if (mydata) {
-                    console.log("if")
+
+                    const addpayment = new Payment({
+                        userId: req.body.userId,
+                        totalAmount: req.body.totalAmount,
+                        paymentMethod:"online",
+                        paymentStatus: "completed"
+                    })
+                    await addpayment.save()
+                    
+                    const promocodeData = await Promocode.findOne({code:req.body.promoCode}) 
+                    const isusercode = await UserCode.findOne({  userId : req.body.userId , promoCodeId : promocodeData._id,})
+                    if(isusercode){
+                    const usercode = new UserCode({
+                        userId : req.body.userId,
+                        promoCodeId : promocodeData._id,
+                    })
+                    await usercode.save()
+                    }
+                  
                     const newstock = Number(product.stock) - Number(data.quantity)
                     await Product.findOneAndUpdate({ _id: product._id }, { $set: { stock: newstock, cart: "false" } })
                     const isorder = await Neworders.find()

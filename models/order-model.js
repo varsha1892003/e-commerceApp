@@ -60,10 +60,6 @@ const orderSchema = new mongoose.Schema({
         type: String,
         // required: true,
     },
-    transactionData:{
-        type:Array,
-        require:true
-    }
 }, {
     timestamps: true,
 })
