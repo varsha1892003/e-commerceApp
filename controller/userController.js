@@ -329,5 +329,44 @@ exports.verifyPayment = async (req, res) => {
         response = { "signatureIsValid": "true" }
     res.send(response)
 }
+exports.removeUserImage = async (req, res) => {
+    try {
+        const newimages = []
+        const userId = req.body.userId
+        const imageUrl = req.body.imageUrl
+
+        const user = await User.findOne({ _id: userId })
+        if (user.profilePic) {
+            for (const i in user.profilePic) {
+                if (user.profilePic[i] == imageUrl) {
+                    const splitimage = user.profilePic[i].split('/').pop()
+                    let imagePath = './images/userImage/' + splitimage
+                    fs.access(imagePath, fs.constants.F_OK, (err) => {
+                        if (err) {
+                            console.error('Image does not exist');
+
+                        } else {
+                            fs.unlinkSync('./images/userImage/' + splitimage)
+
+                        }
+                    });
+                }
+                else {
+                    newimages.push(user.images[i])
+                }
+            }
+        }
+        const mydata = await User.findOneAndUpdate({ _id: userId }, { $set: { profilePic: newimages } })
+        if (mydata) {
+            res.status(200).json({ message: "ok", data: "image remove succesfully" })
+        }
+        else {
+            res.status(400).json("Image does not exist")
+        }
+    }
+    catch (err) {
+        res.status(400).json(err)
+    }
+}
 
 

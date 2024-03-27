@@ -31,6 +31,7 @@ router.post('/updateProfile' , upload.single('profilePic') , userController.upda
 router.post('/createOrderInRp' ,  userController.createOrderInRp)
 router.post('/verifyPayment' ,  userController.verifyPayment)
 
+router.post('/removeUserImage', auth ,  userController.removeUserImage)
 
 
 module.exports = router
