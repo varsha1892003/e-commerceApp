@@ -3,10 +3,11 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user-model')
+const Address = require('../models/address-model')
 const { env } = require('process');
 const fs = require('fs')
 const Razorpay = require('razorpay');
-var crypto = require('crypto')
+var crypto = require('crypto');
 const { RAZORPAYTESTKEYID, RAZORPAYTESTKEYSECRET } = process.env
 var razorpay = new Razorpay({ key_id: RAZORPAYTESTKEYID, key_secret: RAZORPAYTESTKEYSECRET });
 
@@ -256,6 +257,8 @@ exports.updateProfile = async (req, res) => {
 exports.getUserProfile = async (req, res) => {
     try {
         const mydata = await User.findOne({ _id: req.body.userId })
+        const addressdata = await Address.find({userId : req.body.userId })
+        mydata.address = addressdata
         if (mydata) {
             res.json({ message: "ok", data: mydata })
         }
@@ -266,9 +269,10 @@ exports.getUserProfile = async (req, res) => {
 }
 exports.addAddress = async (req, res) => {
     try {
-        const { userId, address } = req.body
-        const userdata = await User.findOneAndUpdate({ _id: userId }, { $set: { address: address } })
-        if (userdata) {
+        const { address , city, state ,country , zip , userId } = req.body
+        const newaddess = new Address(req.body)
+        const mydata = await newaddess.save()
+        if (mydata) {
             res.status(200).json({ message: "ok", data: "address add succesfully" })
         }
         else {
