@@ -7,6 +7,10 @@ const paymentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    orderId : {
+        type: String,
+        required: true,  
+    },
     totalAmount: {
         type: Number,
         default: null

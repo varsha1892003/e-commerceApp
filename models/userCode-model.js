@@ -8,7 +8,7 @@ const usercodeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    PromocodeId: {
+    promoCodeId: {
         type: String,
         required: true,
     },

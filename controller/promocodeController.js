@@ -49,12 +49,12 @@ exports.getOnePromoCode = async (req, res) => {
     try {
         const promocodeId = req.body.promocodeId
         // const mainStoreId = req.headers.mainstoreid 
-        const mydata = await Promocode.findOne({ _id: promocodeId });
+        const mydata = await Promocode.find({ _id: promocodeId });
         if (mydata) {
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.json({ message: 'OK', data: "please try again" })
+            res.json("please try again" )
         }
     } catch (err) {
         res.status(500).json(err)
@@ -104,15 +104,14 @@ exports.searchPromoCode = async (req, res) => {
     try {
         const code = req.body.Promocode
         const userId = req.body.userId
-
+    
         const mydata = await Promocode.findOne({ code: code })
-        const usercode = await UserCode.findOne({PromocodeId : mydata._id , userId: userId})
-
-        if (!usercode) {
-            res.json({ message: 'OK', data: mydata })
+        const usercode = await UserCode.findOne({userId : userId , promoCodeId : mydata._id})
+        if (usercode) {
+            res.json({ message: 'OK', data: "you are not able to use promocode"})
         }
         else {
-            res.json({ message: 'OK', data: "you are not able to user promocode"})
+            res.json({ message: 'OK', data: mydata })
         }
     } catch (err) {
         res.status(500).json(err)

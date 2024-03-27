@@ -111,26 +111,29 @@ exports.addOrder = async (req, res) => {
                 const mydata = await myorder.save()
 
                 if (mydata) {
-
-                    const addpayment = new Payment({
-                        userId: req.body.userId,
-                        totalAmount: req.body.totalAmount,
-                        paymentMethod:"online",
-                        paymentStatus: "completed"
-                    })
-                    await addpayment.save()
-                    
-                    const promocodeData = await Promocode.findOne({code:req.body.promoCode}) 
-                    console.log(promocodeData)
-                    const isusercode = await UserCode.findOne({  userId : req.body.userId , promoCodeId : promocodeData._id})
-                    if(isusercode == null && req.body.promoCode != null){
-                    const usercode = new UserCode({
-                        userId : req.body.userId,
-                        promoCodeId : promocodeData._id,
-                    })
-                    await usercode.save()
+                    const paymentData = await Payment.findOne({ userId: req.body.userId, orderId: mydata._id })
+                    if (paymentData == null) {
+                        const addpayment = new Payment({
+                            userId: req.body.userId,
+                            orderId: mydata._id,
+                            totalAmount: req.body.totalAmount,
+                            paymentMethod: "online",
+                            paymentStatus: "completed"
+                        })
+                        await addpayment.save()
                     }
-                  
+                    if (req.body.promoCode != null) {
+                        const promoCodeData = await Promocode.findOne({ code: req.body.promoCode })
+                        const isusercode = await UserCode.findOne({ userId: req.body.userId, promoCodeId: promoCodeData._id })
+                        if (isusercode == null) {
+                            const newusercode = new UserCode({
+                                userId: req.body.userId,
+                                promoCodeId: promoCodeData._id
+                            })
+                            await newusercode.save()
+                        }
+                    }
+
                     const newstock = Number(product.stock) - Number(data.quantity)
                     await Product.findOneAndUpdate({ _id: product._id }, { $set: { stock: newstock, cart: "false" } })
                     const isorder = await Neworders.find()
