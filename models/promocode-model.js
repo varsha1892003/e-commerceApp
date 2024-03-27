@@ -27,12 +27,10 @@ const promocodeSchema = new mongoose.Schema({
     expireDate: {
         type: String,
         required: true,
-        default: '',
     },
     isActive: {
         type: Boolean,
         required: true,
-        default: true,
     },
     mainstoreid: {
         type: String,

@@ -64,7 +64,7 @@ exports.updatePromoCode = async (req, res) => {
     try {
         const promocodeId = req.body.promocodeId
         // const mainStoreId = req.headers.mainstoreid 
-        const mydata = await Promocode.findOneAndUpadte({ _id: promocodeId },
+        const mydata = await Promocode.findOneAndUpdate({ _id: promocodeId },
             {
                 $set: {
                     code: req.body.code,
@@ -75,6 +75,7 @@ exports.updatePromoCode = async (req, res) => {
                     isActive: req.body.isActive
                 }
             });
+            console.log(mydata)
         if (mydata) {
             res.json({ message: 'OK', data: "promocode update done" })
         }
@@ -82,6 +83,7 @@ exports.updatePromoCode = async (req, res) => {
             res.json({ message: 'OK', data: "please try again" })
         }
     } catch (err) {
+        console.log(err)
         res.status(500).json(err)
     }
 }
@@ -104,15 +106,21 @@ exports.searchPromoCode = async (req, res) => {
     try {
         const code = req.body.Promocode
         const userId = req.body.userId
-    
-        const mydata = await Promocode.findOne({ code: code })
-        const usercode = await UserCode.findOne({userId : userId , promoCodeId : mydata._id})
-        if (usercode) {
-            res.json({ message: 'OK', data: "you are not able to use promocode"})
+        const isactive = "true"
+        const mydata = await Promocode.findOne({ code: code , isactive : isactive})
+        if(mydata){
+            const usercode = await UserCode.findOne({userId : userId , promoCodeId : mydata._id})
+            if (usercode) {
+                res.json({ message: 'OK', data: "you are not able to use promocode"})
+            }
+            else {
+                res.json({ message: 'OK', data: mydata })
+            }
         }
-        else {
-            res.json({ message: 'OK', data: mydata })
+        else{
+            res.status(400).json("promocode is inactive")
         }
+        
     } catch (err) {
         res.status(500).json(err)
     }
