@@ -35,7 +35,7 @@ exports.updateColor = async(req , res)=>{
 exports.removeColor = async(req , res)=>{
     try {
         const {colorId} = req.body
-        const mydata = await Color.findOneAndRemove({_id : colorId});
+        const mydata = await Color.findOneAndDelete({_id : colorId});
         
         if (mydata) {
             res.json({ message: 'OK', data: "Color remove succesfully" })

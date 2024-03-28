@@ -75,13 +75,14 @@ exports.removeCategory = async (req, res) => {
         const category = await Category.findOne({ _id: categoryId })
         if(category.images){
         const splitimage = category.images[0].split('/').pop()
+        console.log(splitimage)
         const imagePath = './images/categoryImage/' + splitimage
         console.log(imagePath)
         fs.access(imagePath, fs.constants.F_OK, (err) => {
             if (err) {
                 console.error('Image does not exist');
             } else {
-                fs.unlinkSync('./images/categoryImage/' + category.images)
+                fs.unlinkSync('./images/categoryImage/' + splitimage)
             }
         });
     }

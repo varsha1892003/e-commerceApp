@@ -366,8 +366,10 @@ function myfilterdata(mylist, month, year) {
                         }
                     }).then(async function (timedata) {
                         for (let k in timedata) {
+                            if(timedata[k].address){
                             const addressdata = await Address.findOne({ _id: timedata[k].address })
                             timedata[k].address = addressdata
+                            }
                             let output2 = await Product.findOne({ _id: timedata[k].productId })
                             let listItem = {
                                 "orderData": timedata[k],
@@ -426,7 +428,3 @@ exports.getOneOrder = async (req, res) => {
     }
 }
 
-
-27/3/2024's task
-change in e commrece app - 3h
-r&d how to work hubdb 5h

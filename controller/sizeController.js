@@ -36,7 +36,7 @@ exports.updateSize = async(req , res)=>{
 exports.removeSize = async(req , res)=>{
     try {
         const {sizeId} = req.body
-        const mydata = await Size.findOneAndRemove({_id : sizeId});
+        const mydata = await Size.findOneAndDelete({_id : sizeId});
         
         if (mydata) {
             res.json({ message: 'OK', data: "size remove succesfully" })
