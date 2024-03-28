@@ -97,7 +97,7 @@ exports.addOrder = async (req, res) => {
                     productId: data.productId,
                     price: product.price,
                     quantity: data.quantity,
-                    totalAmount: product.price,
+                    totalAmount: data.quantity * Product.discount,
                     paymentMethod: "online",
                     paymentStatus: "paid",
                     status: "new order",
