@@ -13,6 +13,7 @@ var crypto = require('crypto');
 const Cart = require('../models/cart-model');
 const UserCode = require('../models/userCode-model');
 const Promocode = require('../models/promocode-model');
+const Address = require('../models/address-model');
 const { RAZORPAYTESTKEYID, RAZORPAYTESTKEYSECRET } = process.env
 var razorpay = new Razorpay({ key_id: RAZORPAYTESTKEYID, key_secret: RAZORPAYTESTKEYSECRET });
 
@@ -99,7 +100,7 @@ exports.addOrder = async (req, res) => {
                     totalAmount: product.price,
                     paymentMethod: "online",
                     paymentStatus: "paid",
-                    status: "completed",
+                    status: "new order",
                     userId: req.body.userId,
                     firstName: user.firstName,
                     lastName: user.lastName,
@@ -289,7 +290,7 @@ exports.updateOrderStatus = async (req, res) => {
                 }
                 olddata.push(orderId)
                 await Neworders.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata } })
-                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "Requested" } })
+                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "new order" } })
 
             }
 
@@ -303,7 +304,7 @@ exports.updateOrderStatus = async (req, res) => {
                 }
                 olddata.push(orderId)
                 await Intransit.findOneAndUpdate({ _id: listId }, { $set: { orderId: olddata } })
-                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "Intransit" } })
+                await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: "In Process" } })
 
             }
 
@@ -365,6 +366,8 @@ function myfilterdata(mylist, month, year) {
                         }
                     }).then(async function (timedata) {
                         for (let k in timedata) {
+                            const addressdata = await Address.findOne({ _id: timedata[k].address })
+                            timedata[k].address = addressdata
                             let output2 = await Product.findOne({ _id: timedata[k].productId })
                             let listItem = {
                                 "orderData": timedata[k],
@@ -390,9 +393,18 @@ function myfilterdata(mylist, month, year) {
 
 exports.getUserOrderStatus = async (req, res) => {
     try {
+        let latesetdata = []
         const userId = req.body.userId
         const mydata = await Order.find({ userId: userId })
-        res.json({ message: "ok", data: mydata })
+        for (let i in mydata) {
+            const productdata = await Product.findOne({ _id: mydata[i].productId })
+            let listItem = {
+                "orderData": mydata[i],
+                "productData": productdata
+            }
+            latesetdata.push(listItem)
+        }
+        res.json({ message: "ok", data: latesetdata })
     }
     catch (err) {
         console.log(err)
@@ -400,3 +412,21 @@ exports.getUserOrderStatus = async (req, res) => {
     }
 }
 
+exports.getOneOrder = async (req, res) => {
+    try {
+        const orderId = req.body.orderId
+        const mydata = await Order.find({ _id: orderId })
+        if (mydata) {
+            res.status(200).json({ message: "ok", "data": mydata })
+        } else {
+            res.status(400).json("no Order found")
+        }
+    } catch (err) {
+        res.status(500).json(err)
+    }
+}
+
+
+27/3/2024's task
+change in e commrece app - 3h
+r&d how to work hubdb 5h

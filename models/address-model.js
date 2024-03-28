@@ -20,6 +20,10 @@ const addressSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    apartment:{
+        type: String,
+        required: true,
+    },
     zip: {
         type: String,
         required: true,

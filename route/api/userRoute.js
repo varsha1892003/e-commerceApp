@@ -25,12 +25,12 @@ router.post('/login' ,  userController.login)
 router.post('/frgtpassword' , userController.frgtpassword)
 router.post('/resetpass' ,  userController.resetpass)
 router.post('/getUserProfile' ,  userController.getUserProfile)
-router.post('/addAddress' ,  userController.addAddress)
+router.post('/addAddress' , auth , userController.addAddress)
+router.post('/removeAddress' , auth ,  userController.removeAddress)
 
 router.post('/updateProfile' , upload.single('profilePic') , userController.updateProfile)
 router.post('/createOrderInRp' ,  userController.createOrderInRp)
 router.post('/verifyPayment' ,  userController.verifyPayment)
-
 router.post('/removeUserImage', auth ,  userController.removeUserImage)
 
 

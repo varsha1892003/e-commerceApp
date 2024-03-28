@@ -53,7 +53,7 @@ const orderSchema = new mongoose.Schema({
         default: null
     },
     address: {
-        type: String,
+        type: Object,
         default: null
     },
     mainStoreId: {

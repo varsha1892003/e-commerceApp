@@ -106,8 +106,8 @@ exports.searchPromoCode = async (req, res) => {
     try {
         const code = req.body.Promocode
         const userId = req.body.userId
-        const isactive = "true"
-        const mydata = await Promocode.findOne({ code: code , isactive : isactive})
+        const isActive = "true"
+        const mydata = await Promocode.findOne({ code: code , isActive : isActive})
         if(mydata){
             const usercode = await UserCode.findOne({userId : userId , promoCodeId : mydata._id})
             if (usercode) {

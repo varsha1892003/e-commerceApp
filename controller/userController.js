@@ -269,7 +269,7 @@ exports.getUserProfile = async (req, res) => {
 }
 exports.addAddress = async (req, res) => {
     try {
-        const { address , city, state ,country , zip , userId } = req.body
+        const { address , city, state ,country , zip , userId , apartment } = req.body
         const newaddess = new Address(req.body)
         const mydata = await newaddess.save()
         if (mydata) {
@@ -282,6 +282,23 @@ exports.addAddress = async (req, res) => {
         console.log(err)
         res.status(500).json(err)
     }
+}
+exports.removeAddress = async(req , res)=>{
+    try{
+    const addressId = req.body.addressId
+
+    const mydata = await Address.find({_id : addressId})
+    if(mydata){
+        res.json({message : ok , data : "remove succesfully"})
+    }
+    else{
+        res.status(400).json("please try again")
+    }
+}
+catch(err){
+    console.log(err)
+    res.status(500).json(err)
+}
 }
 exports.createOrderInRp = async (req, res) => {
     try {
