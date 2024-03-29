@@ -211,11 +211,10 @@ exports.updateProfile = async (req, res) => {
         let formdata = JSON.parse(req.body.formData)
         // let password = await bcrypt.hash(formdata.password, 10)
         const userId = req.body.userId;
-        console.log(userId)
         let profilepic = null
         const olddata = await User.findOne({ _id: userId })
         if (req.file) {
-            if (olddata.profilePic) {
+            if (olddata.profilePic && olddata.profilePic.length === 1 && olddata.profilePic[0] != undefined){
                 const splitimage = olddata.profilePic[0].split('/').pop()
                 let imagePath = './images/userImage/' + splitimage
                 fs.access(imagePath, fs.constants.F_OK, (err) => {
@@ -241,7 +240,6 @@ exports.updateProfile = async (req, res) => {
                 gender: formdata.gender
             }
         })
-        console.log(formdata.address)
         if (formdata.address) {
             for (let i in formdata.address) {
                 const olddata = await Address.findOne({ _id: formdata.address[i]._id })
@@ -258,6 +256,18 @@ exports.updateProfile = async (req, res) => {
                         }
                     })
                 }
+                else {
+                    const newaddess = new Address({
+                        "address": formdata.address[i].address,
+                        "city": formdata.address[i].city,
+                        "state": formdata.address[i].state,
+                        "country": formdata.address[i].country,
+                        "zip": formdata.address[i].zip,
+                        "apartment": formdata.address[i].apartment,
+                        "userId": userId
+                    })
+                    const mydata = await newaddess.save()
+                }
             }
         }
         if (mydata) {
@@ -268,7 +278,6 @@ exports.updateProfile = async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err)
         res.status(400).json(err)
     }
 }
