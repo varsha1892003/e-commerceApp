@@ -15,6 +15,9 @@ router.post('/kanbanData',adminAuth , orderController.kanbanData);
 //user can get their order status 
 router.post('/getUserOrderStatus', auth , orderController.getUserOrderStatus);
 router.post('/getOneOrder', auth , orderController.getOneOrder);
+router.post('/cancelOrder', auth , orderController.cancelOrder);
+
+
 
 
 

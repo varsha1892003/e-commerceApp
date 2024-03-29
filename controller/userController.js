@@ -208,9 +208,10 @@ exports.resetpass = async (req, res) => {
 }
 exports.updateProfile = async (req, res) => {
     try {
-        let formdata = JSON.parse(req.body.formdata)
-        let password = await bcrypt.hash(formdata.password, 10)
+        let formdata = JSON.parse(req.body.formData)
+        // let password = await bcrypt.hash(formdata.password, 10)
         const userId = req.body.userId;
+        console.log(userId)
         let profilepic = null
         const olddata = await User.findOne({ _id: userId })
         if (req.file) {
@@ -227,7 +228,7 @@ exports.updateProfile = async (req, res) => {
             }
             profilepic = process.env.USERIMAGE + req.file.filename
         }
-        else {
+        else if (olddata.profilePic) {
             profilepic = olddata.profilePic
         }
         const mydata = await User.findOneAndUpdate({ _id: userId }, {
@@ -235,13 +236,30 @@ exports.updateProfile = async (req, res) => {
                 firstName: formdata.firstName,
                 lastName: formdata.lastName,
                 email: formdata.email,
-                password: password,
                 profilePic: profilepic,
                 phone: formdata.phone,
-                address: formdata.address,
                 gender: formdata.gender
             }
         })
+        console.log(formdata.address)
+        if (formdata.address) {
+            for (let i in formdata.address) {
+                const olddata = await Address.findOne({ _id: formdata.address[i]._id })
+                if (olddata) {
+                    await Address.findOneAndUpdate({ _id: olddata._id }, {
+                        $set:
+                        {
+                            "address": formdata.address[i].address,
+                            "city": formdata.address[i].city,
+                            "state": formdata.address[i].state,
+                            "country": formdata.address[i].country,
+                            "zip": formdata.address[i].zip,
+                            "apartment": formdata.address[i].apartment
+                        }
+                    })
+                }
+            }
+        }
         if (mydata) {
             res.json({ message: "ok", "data": "user update succesfully" })
         }
@@ -257,7 +275,7 @@ exports.updateProfile = async (req, res) => {
 exports.getUserProfile = async (req, res) => {
     try {
         const mydata = await User.findOne({ _id: req.body.userId })
-        const addressdata = await Address.find({userId : req.body.userId })
+        const addressdata = await Address.find({ userId: req.body.userId })
         mydata.address = addressdata
         if (mydata) {
             res.json({ message: "ok", data: mydata })
@@ -269,7 +287,7 @@ exports.getUserProfile = async (req, res) => {
 }
 exports.addAddress = async (req, res) => {
     try {
-        const { address , city, state ,country , zip , userId , apartment } = req.body
+        const { address, city, state, country, zip, userId, apartment } = req.body
         const newaddess = new Address(req.body)
         const mydata = await newaddess.save()
         if (mydata) {
@@ -283,27 +301,27 @@ exports.addAddress = async (req, res) => {
         res.status(500).json(err)
     }
 }
-exports.removeAddress = async(req , res)=>{
-    try{
-    const addressId = req.body.addressId
+exports.removeAddress = async (req, res) => {
+    try {
+        const addressId = req.body.addressId
 
-    const mydata = await Address.find({_id : addressId})
-    if(mydata){
-        res.json({message : ok , data : "remove succesfully"})
+        const mydata = await Address.findOneAndDelete({ _id: addressId })
+        if (mydata) {
+            res.json({ message: "ok", data: "remove succesfully" })
+        }
+        else {
+            res.status(400).json("please try again")
+        }
     }
-    else{
-        res.status(400).json("please try again")
+    catch (err) {
+        console.log(err)
+        res.status(500).json(err)
     }
-}
-catch(err){
-    console.log(err)
-    res.status(500).json(err)
-}
 }
 exports.createOrderInRp = async (req, res) => {
     try {
 
-        const amount = Number(req.body.amount) * 100 
+        const amount = Number(req.body.amount) * 100
         const order = await testCreateOrder(amount)
         // await testFetchOrder(order.id);
         res.json({ message: "ok", data: order })

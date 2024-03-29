@@ -64,7 +64,7 @@ exports.cancelOrder = async (req, res) => {
     try {
         const order = await Order.findOne({ _id: orderId });
         if (order) {
-            if (order.status === 'pending' || order.status === 'processing') {
+            if (order.status === 'new order' || order.status === 'inprocess') {
                 order.status = 'cancelled';
                 await order.save();
                 res.json({ message: 'Order cancelled successfully' });
@@ -92,12 +92,13 @@ exports.addOrder = async (req, res) => {
         for (let i in orderData) {
             const data = orderData[i]
             const product = await Product.findOne({ _id: data.productId })
+            const totalAmount = Number(data.quantity) * Number(product.discountPrice)
             if (product) {
                 const myorder = new Order({
                     productId: data.productId,
                     price: product.price,
                     quantity: data.quantity,
-                    totalAmount: data.quantity * Product.discount,
+                    totalAmount: totalAmount ,
                     paymentMethod: "online",
                     paymentStatus: "paid",
                     status: "new order",

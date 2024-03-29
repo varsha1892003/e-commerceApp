@@ -2,6 +2,7 @@ const express = require('express')
 const fs = require('fs')
 const User = require('../models/user-model')
 const MainStore = require('../models/mainStore-model')
+const Address = require('../models/address-model')
 const { env } = require('process');
 
 exports.getUsers = async (req, res) => {
@@ -52,8 +53,9 @@ exports.removeUser = async (req, res) => {
 
 exports.getOneUser = async (req, res) => {
     try {
-        const userId = req.body.userId;
-        const mydata = await User.findOne({ _id: userId })
+        const mydata = await User.findOne({ _id: req.body.userId })
+        const addressdata = await Address.find({userId : req.body.userId })
+        mydata.address = addressdata
         if (mydata) {
             res.json({ message: "ok", "data": mydata })
         }
