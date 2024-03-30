@@ -209,12 +209,11 @@ exports.resetpass = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         let formdata = JSON.parse(req.body.formData)
-        // let password = await bcrypt.hash(formdata.password, 10)
         const userId = req.body.userId;
         let profilepic = null
         const olddata = await User.findOne({ _id: userId })
         if (req.file) {
-            if (olddata.profilePic && olddata.profilePic.length === 1 && olddata.profilePic[0] != undefined){
+            if (olddata.profilePic && olddata.profilePic.length === 1 && olddata.profilePic[0] != undefined) {
                 const splitimage = olddata.profilePic[0].split('/').pop()
                 let imagePath = './images/userImage/' + splitimage
                 fs.access(imagePath, fs.constants.F_OK, (err) => {
@@ -384,7 +383,7 @@ exports.removeUserImage = async (req, res) => {
         const imageUrl = req.body.imageUrl
 
         const user = await User.findOne({ _id: userId })
-        if (user.profilePic) {
+        if (user.profilePic && user.profilePic.length === 1 && user.profilePic[0] != undefined) {
             for (const i in user.profilePic) {
                 if (user.profilePic[i] == imageUrl) {
                     const splitimage = user.profilePic[i].split('/').pop()
@@ -413,8 +412,13 @@ exports.removeUserImage = async (req, res) => {
         }
     }
     catch (err) {
+        console.log(err)
         res.status(400).json(err)
     }
 }
+
+
+
+
 
 
