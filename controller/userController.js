@@ -364,7 +364,6 @@ async function testCreateOrder(amount) {
 //     }
 // }
 exports.verifyPayment = async (req, res) => {
-    console.log(verifyPayment)
     let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
     var verifysign = crypto.createHmac('sha256', process.env.RAZORPAYTESTKEYSECRET)
         .update(body.toString())

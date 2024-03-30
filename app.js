@@ -5,6 +5,9 @@ let cors = require('cors')
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+const fs = require('fs')
+const https = require('https')
+
 
 const userRoute = require('./route/api/userRoute');
 app.use('/', userRoute);
@@ -31,4 +34,18 @@ app.use('/' , sizeRoute)
 const  colorRoute = require('./route/api/colorRoute')
 app.use('/' , colorRoute)
 
-app.listen(process.env.PORT, '0.0.0.0')
+
+
+const options = {
+    key: fs.readFileSync("./key/private.key"), // replace it with your key path
+    cert: fs.readFileSync("./key/certificate.crt"), // replace it with your certificate path
+}
+
+https.createServer(options, (req, res) => {
+    res.writeHead(200);
+    res.end('Hello, HTTPS World!');
+  }).listen(process.env.PORT, '0.0.0.0', () => {
+    console.log('Server is running on port 8080');
+  });
+
+// app.listen(process.env.PORT, '0.0.0.0')
