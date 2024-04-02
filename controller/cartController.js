@@ -7,7 +7,7 @@ const Product = require('../models/product-model');
 exports.addCart = async (req, res) => {
     try {
         const carttrue = "true"
-        // const mainStoreId = req.headers.mainstoreid 
+        const mainStoreId = req.headers.mainStoreId 
         let updateproductData = []
         const cart = await Cart.findOne({ userId: req.body.userId })
         const isproductid = await Cart.findOne({ userId: req.body.userId, "productData.productId": req.body.productId })
@@ -24,7 +24,7 @@ exports.addCart = async (req, res) => {
             const mycart = new Cart({
                 userId: req.body.userId,
                 productData: myproductData,
-                // mainStoreId:mainStoreId
+                mainStoreId:mainStoreId
             });
             const mydata = await mycart.save()
             if (mydata) {
@@ -66,7 +66,7 @@ exports.addCart = async (req, res) => {
 }
 exports.getUserCart = async (req, res) => {
     try {
-        // const mainStoreId = req.headers.mainstoreid 
+        const mainStoreId = req.headers.mainStoreId 
         const userId = req.body.userId
         const finaldata = []
         const usercart = await Cart.findOne({ userId: userId })
@@ -76,7 +76,7 @@ exports.getUserCart = async (req, res) => {
                     "product": '',
                     "quantity": ''
                 }
-                const productData = await Product.findOne({ _id: usercart.productData[i].productId })
+                const productData = await Product.findOne({ _id: usercart.productData[i].productId } , {mainStoreId:mainStoreId})
                 newd.product = productData
                 newd.quantity = usercart.productData[i].productQuantity
                 finaldata.push(newd)
@@ -97,7 +97,7 @@ exports.removeCart = async (req, res) => {
         const mydata = await Cart.findOneAndDelete({ _id: cartId })
 
         if (mydata) {
-            res.json({ message: 'OK', data: "Cart remove succesfully" })
+            res.json({ message: 'OK', data: "Cart remove successfully" })
         }
         else {
             res.status(400).json("please try again")

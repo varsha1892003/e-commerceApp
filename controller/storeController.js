@@ -4,7 +4,7 @@ const Store = require('../models/store-model')
 const { env } = require('process');
 
 exports.addStore = async (req, res) => {
-    // const mainStoreId = req.headers.mainstoreid 
+    const mainStoreId = req.headers.mainStoreId 
     let formdata = JSON.parse(req.body.formData)
     try {
         let allfile = []
@@ -20,7 +20,7 @@ exports.addStore = async (req, res) => {
             ownerName: formdata.ownerName,
             phone: formdata.phone,
             images: allfile,
-            // mainStoreId:mainStoreId
+            mainStoreId:mainStoreId
         });
         const mydata = await mystore.save()
         if (mydata) {
@@ -36,19 +36,7 @@ exports.addStore = async (req, res) => {
 }
 exports.getStores = async (req, res) => {
     try {
-        const mydata = await Store.find()
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        } else {
-            res.status(500).json({ message: "no Store found" })
-        }
-    } catch (err) {
-        res.status(400).json(err)
-    }
-}
-exports.getStoreByStore = async (req, res) => {
-    try {
-        const mainStoreId = req.headers.mainstoreid
+    const mainStoreId = req.headers.mainStoreId 
         const mydata = await Store.find({mainStoreId:mainStoreId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
@@ -59,6 +47,7 @@ exports.getStoreByStore = async (req, res) => {
         res.status(400).json(err)
     }
 }
+
 exports.removeStore = async (req, res) => {
     try {
         const storeId = req.body.storeId

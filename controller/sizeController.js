@@ -51,7 +51,9 @@ exports.removeSize = async(req , res)=>{
 
 exports.getSizes = async(req , res) =>{
     try {
-        const mydata = await Size.find()
+        const mainStoreId = req.headers.mainStoreId
+
+        const mydata = await Size.find({mainStoreId:mainStoreId})
         
         if (mydata) {
             res.json({ message: 'OK', data: mydata})

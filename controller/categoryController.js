@@ -5,7 +5,7 @@ const { env } = require('process');
 
 exports.addCategory = async (req, res) => {
     try {
-        // const mainStoreId = req.headers.mainstoreid 
+        const mainStoreId = req.headers.mainStoreId 
         let formdata = JSON.parse(req.body.formData)
         let myfile = null
         if (req.file) {
@@ -15,7 +15,7 @@ exports.addCategory = async (req, res) => {
             categoryName: formdata.categoryName,
             description: formdata.description,
             images: myfile,
-            // mainStoreId:mainStoreId
+            mainStoreId:mainStoreId
         });
         const mydata = await mycategory.save()
         if (mydata) {
@@ -100,20 +100,8 @@ exports.removeCategory = async (req, res) => {
 }
 exports.getCategorys = async (req, res) => {
     try {
-        const mydata = await Category.find()
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        } else {
-            res.status(500).json({ message: "no Category found" })
-        }
-    } catch (err) {
-        res.status(400).json(err)
-    }
-}
-exports.getCategoryByStore = async (req, res) => {
-    try {
-        const mainStoreId = req.headers.mainstoreid 
-        const mydata = await Category.find({mainStoreId: mainStoreId})
+        const mainStoreId = req.headers.mainStoreId 
+        const mydata = await Category.find({mainStoreId:mainStoreId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {

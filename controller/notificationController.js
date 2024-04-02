@@ -90,7 +90,7 @@ exports.updateNotification = async (req, res) => {
             $set: {
                 userId: req.body.userId,
                 message: req.body.message,
-                read: req.body.read,
+                // read: req.body.read,
             }
         })
         if (mydata) {

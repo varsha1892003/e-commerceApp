@@ -5,7 +5,7 @@ const UserCode = require('../models/userCode-model');
 
 exports.addPromoCode = async (req, res) => {
     try {
-        // const mainStoreId = req.headers.mainstoreid 
+        const mainStoreId = req.headers.mainStoreId 
         const mypromocode = new Promocode({
             code: req.body.code,
             type: req.body.type,
@@ -13,7 +13,7 @@ exports.addPromoCode = async (req, res) => {
             description: req.body.description,
             expireDate: req.body.expireDate,
             isActive: req.body.isActive,
-            // mainstoreid: req.body.mainstoreid
+            mainStoreId: mainStoreId
         });
         const mydata = await mypromocode.save()
         if (mydata) {
@@ -33,8 +33,8 @@ exports.addPromoCode = async (req, res) => {
 }
 exports.getPromoCodes = async (req, res) => {
     try {
-        // const mainStoreId = req.headers.mainstoreid 
-        const mydata = await Promocode.find();
+        const mainStoreId = req.headers.mainStoreId 
+        const mydata = await Promocode.find({mainStoreId:mainStoreId});
         if (mydata) {
             res.json({ message: 'OK', data: mydata })
         }
@@ -48,7 +48,6 @@ exports.getPromoCodes = async (req, res) => {
 exports.getOnePromoCode = async (req, res) => {
     try {
         const promocodeId = req.body.promocodeId
-        // const mainStoreId = req.headers.mainstoreid 
         const mydata = await Promocode.find({ _id: promocodeId });
         if (mydata) {
             res.json({ message: 'OK', data: mydata })
@@ -105,9 +104,10 @@ exports.removePromoCode = async (req, res) => {
 exports.searchPromoCode = async (req, res) => {
     try {
         const code = req.body.Promocode
+        const mainStoreId = req.headers.mainStoreId 
         const userId = req.body.userId
         const isActive = "true"
-        const mydata = await Promocode.findOne({ code: code , isActive : isActive})
+        const mydata = await Promocode.findOne({ code: code , isActive : isActive , mainStoreId:mainStoreId})
         if(mydata){
             const usercode = await UserCode.findOne({userId : userId , promoCodeId : mydata._id})
             if (usercode) {

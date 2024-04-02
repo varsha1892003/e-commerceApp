@@ -50,7 +50,8 @@ exports.removeColor = async(req , res)=>{
 
 exports.getColors = async(req , res) =>{
     try {
-        const mydata = await Color.find()
+        const mainStoreId = req.headers.mainstoreid
+        const mydata = await Color.find({mainStoreId:mainStoreId})
         
         if (mydata) {
             res.json({ message: 'OK', data: mydata})
@@ -77,3 +78,5 @@ exports.getOneColor = async(req , res)=>{
         res.status(500).json(err)
     } 
 }
+
+

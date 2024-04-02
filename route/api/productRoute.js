@@ -26,12 +26,8 @@ router.post('/updateProduct',  upload.array('images' ,10) ,adminAuth,  productCo
 
 // product api 
 router.get('/getProducts' ,   productController.getProducts)
-router.post('/getProductByStore' ,   productController.getProductByStore)
 router.post('/getOneProduct' , newdata ,productController.getOneProduct)
 router.post('/getProductByCategory', newdata ,productController.getProductByCategory)
-router.post('/getProductByCategoryByStore', newdata ,productController.getProductByCategoryByStore)
-
-// router.post('/getProductByStore', newdata ,adminAuth , productController.getProductByStore)
 
 router.post('/getProductByFilter', newdata  , productController.getProductByFilter)
 router.post('/removeProductImage',adminAuth ,  productController.removeProductImage)

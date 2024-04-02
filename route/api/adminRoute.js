@@ -22,9 +22,6 @@ router.get('/getUsers', adminAuth, adminController.getUsers);
 router.post('/addUser' , adminAuth , upload.single('profilePic') , adminController.addUser)
 router.post('/removeUser' , adminAuth , adminController.removeUser)
 router.post('/getOneUser' , adminAuth , adminController.getOneUser)
-
 router.post('/addMainStore' , adminAuth , adminController.addMainStore)
-
-
 
 module.exports = router

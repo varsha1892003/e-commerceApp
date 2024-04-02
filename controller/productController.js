@@ -6,7 +6,8 @@ const Category = require('../models/category-model')
 
 exports.addProduct = async (req, res) => {
     try {
-        // const mainStoreId = "null"
+        const mainStoreId = req.headers.mainStoreId
+
         const formdata = JSON.parse(req.body.formData)
         const storedata = await Store.findOne({ _id: formdata.storeId })
 
@@ -32,7 +33,7 @@ exports.addProduct = async (req, res) => {
             size: formdata.size,
             color: formdata.color,
             images: allfile,
-            // mainStoreId: mainStoreId
+            mainStoreId: mainStoreId
         });
         const mydata = await product.save()
         if (mydata) {
@@ -118,19 +119,7 @@ exports.removeProduct = async (req, res) => {
 }
 exports.getProducts = async (req, res) => {
     try {
-        const mydata = await Product.find()
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        } else {
-            res.status(500).json({ message: "no product found" })
-        }
-    } catch (err) {
-        res.status(400).json(err)
-    }
-}
-exports.getProductByStore = async (req, res) => {
-    try {
-        const mainStoreId = req.headers.mainstoreid 
+        const mainStoreId = req.headers.mainStoreId
         const mydata = await Product.find({mainStoreId : mainStoreId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
@@ -156,24 +145,9 @@ exports.getOneProduct = async (req, res) => {
 }
 exports.getProductByCategory = async (req, res) => {
     try {
-        const categoryId = req.body.categoryId
-        const mydata = await Product.find({ categoryId: categoryId})
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
-        }
-        else {
-            res.status(500).json("no product found")
-        }
-    }
-    catch (err) {
-        res.status(500).json(err)
-    }
-}
-exports.getProductByCategoryByStore = async (req, res) => {
-    try {
         const mainStoreId = req.headers.mainstoreid 
         const categoryId = req.body.categoryId
-        const mydata = await Product.find({ categoryId: categoryId , mainStoreId: mainStoreId})
+        const mydata = await Product.find({ categoryId: categoryId ,mainStoreId: mainStoreId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         }
@@ -185,6 +159,7 @@ exports.getProductByCategoryByStore = async (req, res) => {
         res.status(500).json(err)
     }
 }
+
 // exports.getProductByStore = async (req, res) => {
 //     try {
 //         const storeId = req.body.storeId
