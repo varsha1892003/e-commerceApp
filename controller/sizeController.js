@@ -80,3 +80,20 @@ exports.getOnesize = async(req , res)=>{
         res.status(500).json(err)
     } 
 }
+
+exports.getSizeByStore = async(req , res)=>{
+    try {
+        const storeId = req.body.storeId
+
+        const mydata = await Size.find({storeId:storeId})
+        
+        if (mydata) {
+            res.json({ message: 'OK', data: mydata})
+        }
+        else {
+            res.status(400).json("please try again")
+        }
+    } catch (err) {
+        res.status(500).json(err)
+    } 
+}

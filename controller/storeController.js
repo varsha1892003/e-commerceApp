@@ -47,7 +47,6 @@ exports.getStores = async (req, res) => {
         res.status(400).json(err)
     }
 }
-
 exports.removeStore = async (req, res) => {
     try {
         const storeId = req.body.storeId

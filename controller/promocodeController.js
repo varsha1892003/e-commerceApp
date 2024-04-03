@@ -13,6 +13,7 @@ exports.addPromoCode = async (req, res) => {
             description: req.body.description,
             expireDate: req.body.expireDate,
             isActive: req.body.isActive,
+            storeId : req.body.storeId,
             mainStoreId: mainStoreId
         });
         const mydata = await mypromocode.save()
@@ -124,4 +125,18 @@ exports.searchPromoCode = async (req, res) => {
     } catch (err) {
         res.status(500).json(err)
     }
+}
+exports.getPromoCodesByStore = async (req , res)=>{
+    try {
+        const storeId = req.body.storeId
+        const mydata = await Promocode.find({ storeId: storeId });
+        if (mydata) {
+            res.json({ message: 'OK', data: mydata })
+        }
+        else {
+            res.json("please try again" )
+        }
+    } catch (err) {
+        res.status(500).json(err)
+    } 
 }

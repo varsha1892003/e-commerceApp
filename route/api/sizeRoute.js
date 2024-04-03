@@ -9,6 +9,8 @@ router.post('/updateSize', adminAuth, sizeController.updateSize);
 router.post('/removeSize', adminAuth, sizeController.removeSize);
 router.get('/getSizes',  sizeController.getSizes);
 router.post('/getOnesize', adminAuth, sizeController.getOnesize);
+router.post('/getSizeByStore', adminAuth, sizeController.getSizeByStore);
+
 
 
 module.exports = router

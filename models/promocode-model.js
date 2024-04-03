@@ -32,7 +32,12 @@ const promocodeSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
-    mainstoreid: {
+    mainStoreId: {
+        type: String,
+        // required: true,
+        default: null
+    },
+    storeId: {
         type: String,
         // required: true,
         default: null

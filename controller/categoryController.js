@@ -7,6 +7,7 @@ exports.addCategory = async (req, res) => {
     try {
         const mainStoreId = req.headers.mainStoreId 
         let formdata = JSON.parse(req.body.formData)
+
         let myfile = null
         if (req.file) {
             myfile = process.env.CATEGORYIMAGE + req.file.filename
@@ -15,6 +16,7 @@ exports.addCategory = async (req, res) => {
             categoryName: formdata.categoryName,
             description: formdata.description,
             images: myfile,
+            storeId: req.body.storeId,
             mainStoreId:mainStoreId
         });
         const mydata = await mycategory.save()
@@ -25,6 +27,7 @@ exports.addCategory = async (req, res) => {
             res.json({ message: 'OK', data: "please try again" })
         }
     } catch (err) {
+        console.log(err)
         res.status(500).json(err)
     }
 }
@@ -115,6 +118,19 @@ exports.getOneCategory = async (req, res) => {
     try {
         const categoryId = req.body.categoryId
         const mydata = await Category.find({ _id: categoryId })
+        if (mydata) {
+            res.status(200).json({ message: "ok", "data": mydata })
+        } else {
+            res.status(500).json({ message: "no Category found" })
+        }
+    } catch (err) {
+        res.status(400).json(err)
+    }
+}
+exports.getCategoryByStore = async (req , res)=>{
+    try {
+        const storeId = req.body.storeId
+        const mydata = await Category.find({storeId:storeId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {

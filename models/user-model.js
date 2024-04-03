@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         default :null
     },
-    mainStoreId : {
+    storeId : {
         type:String,
         // require :true
     }

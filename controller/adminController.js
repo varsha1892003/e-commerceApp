@@ -3,12 +3,12 @@ const fs = require('fs')
 const User = require('../models/user-model')
 const MainStore = require('../models/mainStore-model')
 const Address = require('../models/address-model')
-const { env } = require('process');
+const { env, features } = require('process');
 
 exports.getUsers = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainStoreId
-        const mydata = await User.find({mainStoreId : mainStoreId})
+        // const storeId = req.headers.storeId
+        const mydata = await User.find()
         if (mydata) {
             res.json({ message: "ok", "data": mydata })
         } else {
@@ -84,4 +84,19 @@ exports.addMainStore = async (req, res) => {
         res.status(500).json(err)
     }
 }
+
+exports.getUsersByStore = async (req, res) => {
+    try {
+        const storeId = req.body.storeId
+        const mydata = await User.find({storeId})
+        if (mydata) {
+            res.json({ message: "ok", "data": mydata })
+        } else {
+            res.status(500).json({ message: "no User found" })
+        }
+    } catch (err) {
+        res.status(400).json(err)
+    }
+}
+
 

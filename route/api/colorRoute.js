@@ -9,6 +9,10 @@ router.post('/updateColor', adminAuth, colorController.updateColor);
 router.post('/removeColor', adminAuth, colorController.removeColor);
 router.get('/getColors',  colorController.getColors);
 router.post('/getOneColor', adminAuth, colorController.getOneColor);
+router.post('/getColorByStore', adminAuth, colorController.getColorByStore);
+
+
+
 
 
 module.exports = router

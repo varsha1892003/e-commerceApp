@@ -159,22 +159,21 @@ exports.getProductByCategory = async (req, res) => {
         res.status(500).json(err)
     }
 }
-
-// exports.getProductByStore = async (req, res) => {
-//     try {
-//         const storeId = req.body.storeId
-//         const mydata = await Product.find({ storeId: storeId })
-//         if (mydata) {
-//             res.status(200).json({ message: "ok", "data": mydata })
-//         }
-//         else {
-//             res.status(500).json("no product found")
-//         }
-//     }
-//     catch (err) {
-//         res.status(500).json(err)
-//     }
-// }
+exports.getProductByStore = async (req, res) => {
+    try {
+        const storeId = req.body.storeId
+        const mydata = await Product.find({ storeId: storeId })
+        if (mydata) {
+            res.status(200).json({ message: "ok", "data": mydata })
+        }
+        else {
+            res.status(500).json("no product found")
+        }
+    }
+    catch (err) {
+        res.status(500).json(err)
+    }
+}
 exports.getProductByFilter = async (req, res) => {
     try {
         const alldata = []
