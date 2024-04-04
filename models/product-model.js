@@ -53,10 +53,6 @@ const productSchema = new mongoose.Schema({
   color: {
     type: String,
   },
-  mainStoreId: {
-    type: String,
-    // required: true,
-  },
   cart:{
     type:String,
      default :"false"

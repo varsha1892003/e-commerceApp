@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const orderController = require('../../controller/orderController');
 const multer = require('multer');
-const adminAuth = require('../../middleware/adminAuth')
+const adminAuth = require('../../middleware/adminAuth') 
 const auth = require('../../middleware/userAuth')
 
 // order api 

@@ -3,8 +3,7 @@ const fs = require('fs')
 const Store = require('../models/store-model')
 const { env } = require('process');
 
-exports.addStore = async (req, res) => {
-    const mainStoreId = req.headers.mainStoreId 
+exports.addStore = async (req, res) => { 
     let formdata = JSON.parse(req.body.formData)
     try {
         let allfile = []
@@ -19,8 +18,7 @@ exports.addStore = async (req, res) => {
             address: formdata.address,
             ownerName: formdata.ownerName,
             phone: formdata.phone,
-            images: allfile,
-            mainStoreId:mainStoreId
+            images: allfile
         });
         const mydata = await mystore.save()
         if (mydata) {
@@ -36,8 +34,7 @@ exports.addStore = async (req, res) => {
 }
 exports.getStores = async (req, res) => {
     try {
-    const mainStoreId = req.headers.mainStoreId 
-        const mydata = await Store.find({mainStoreId:mainStoreId})
+        const mydata = await Store.find()
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {

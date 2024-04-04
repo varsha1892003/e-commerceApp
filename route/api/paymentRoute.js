@@ -7,6 +7,7 @@ const adminAuth = require('../../middleware/adminAuth')
 const formData = require('express-form-data');
 const { route } = require('./userRoute');
 const newdata = formData.parse()
+const superAdminAuth = require('../../middleware/superAdminAuth') 
 
 
 router.post('/getpayments' , adminAuth , paymentController.getpayments)

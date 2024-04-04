@@ -31,6 +31,10 @@ const addressSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true,
+    },
+    storeId:{
+        type: String,
+        default:null
     }
 },
     {

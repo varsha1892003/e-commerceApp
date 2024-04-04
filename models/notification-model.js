@@ -16,6 +16,10 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         default: false
     },
+    storeId:{
+        type: String,
+        default: null
+    }
 },
     {
         timestamps: true,

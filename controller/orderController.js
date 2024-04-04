@@ -21,7 +21,8 @@ exports.getUserOrder = async (req, res) => {
     try {
         // const mainStoreId = req.headers.mainstoreid
         const userId = req.body.userId
-        const mydata = await Order.find({ userId: userId })
+        const storeId = req.headers.storeid
+        const mydata = await Order.find({ userId: userId  ,storeId:storeId })
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
@@ -34,8 +35,8 @@ exports.getUserOrder = async (req, res) => {
 // admin can get all orders 
 exports.getOrdersByStore = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainstoreid
-        const mydata = await Order.find({ mainStoreId: mainStoreId })
+        const storeId = req.headers.storeId
+        const mydata = await Order.find({ storeId: storeId })
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
@@ -82,6 +83,7 @@ exports.cancelOrder = async (req, res) => {
 
 exports.addOrder = async (req, res) => {
     try {
+        const storeId = req.headers.storeid
         const user = await User.findOne({ _id: req.body.userId })
         let transactionData = null
         const fetch = await testFetchOrder(req.body.transactionData.razorpay_order_id);
@@ -108,7 +110,8 @@ exports.addOrder = async (req, res) => {
                     phoneNumber: req.body.phoneNumber,
                     address: req.body.address,
                     promoCode: req.body.promoCode,
-                    transactionData: transactionData
+                    transactionData: transactionData,
+                    storeId:storeId
                 });
                 const mydata = await myorder.save()
 
@@ -130,7 +133,8 @@ exports.addOrder = async (req, res) => {
                         if (isusercode == null) {
                             const newusercode = new UserCode({
                                 userId: req.body.userId,
-                                promoCodeId: promoCodeData._id
+                                promoCodeId: promoCodeData._id,
+                                storeId:storeId
                             })
                             await newusercode.save()
                         }
@@ -204,22 +208,24 @@ async function testFetchOrder(orderId) {
 
 exports.kanbanData = async (req, res) => {
     try {
+        const storeId = req.headers.storeid
         const { month, year } = req.body
+        
         let kanbandata = []
         const neworderslist = await Neworders.find()
-        const obj = await myfilterdata(neworderslist, month, year)
+        const obj = await myfilterdata(neworderslist, month, year , storeId)
         kanbandata.push(obj)
 
         const intransitlist = await Intransit.find()
-        const obj2 = await myfilterdata(intransitlist, month, year)
+        const obj2 = await myfilterdata(intransitlist, month, year , storeId)
         kanbandata.push(obj2)
 
         const Shippedlist = await Shipped.find()
-        const obj4 = await myfilterdata(Shippedlist, month, year)
+        const obj4 = await myfilterdata(Shippedlist, month, year , storeId)
         kanbandata.push(obj4)
 
         const Deliveredlist = await Delivered.find()
-        const obj3 = await myfilterdata(Deliveredlist, month, year)
+        const obj3 = await myfilterdata(Deliveredlist, month, year , storeId)
         kanbandata.push(obj3)
 
         res.json({ message: 'OK', data: kanbandata })
@@ -348,17 +354,22 @@ exports.updateOrderStatus = async (req, res) => {
     }
 }
 
-function myfilterdata(mylist, month, year) {
+function myfilterdata(mylist, month, year , storeId) {
     return new Promise(async resolve => {
         try {
             let latesetdata = []
             if (mylist.length > 0) {
+                
                 for (j in mylist[0].orderId) {
                     await Order.find({
                         $and: [
                             {
                                 _id: mylist[0].orderId[j]
-                            }],
+                            },
+                            {
+                                storeId:storeId
+                            },
+                            ],
                         $expr: {
                             $and: [
                                 { $eq: [{ $month: '$createdAt' }, month] },
@@ -367,6 +378,7 @@ function myfilterdata(mylist, month, year) {
                         }
                     }).then(async function (timedata) {
                         for (let k in timedata) {
+                     
                             if(timedata[k].address){
                             const addressdata = await Address.findOne({ _id: timedata[k].address })
                             timedata[k].address = addressdata
@@ -398,7 +410,8 @@ exports.getUserOrderStatus = async (req, res) => {
     try {
         let latesetdata = []
         const userId = req.body.userId
-        const mydata = await Order.find({ userId: userId })
+        const storeId = req.headers.storeid
+        const mydata = await Order.find({ userId: userId , storeId:storeId })
         for (let i in mydata) {
             const productdata = await Product.findOne({ _id: mydata[i].productId })
             let listItem = {

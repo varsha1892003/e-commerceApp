@@ -6,6 +6,8 @@ const adminAuth = require('../../middleware/adminAuth')
 const auth = require('../../middleware/userAuth')
 const formData = require('express-form-data');
 const newdata = formData.parse()
+const superAdminAuth = require('../../middleware/superAdminAuth') 
+
 
 router.use('/product', express.static('images/productImage'))
 
@@ -25,7 +27,7 @@ router.post('/removeProduct', newdata , adminAuth , productController.removeProd
 router.post('/updateProduct',  upload.array('images' ,10) ,adminAuth,  productController.updateProduct);
 
 // product api 
-router.get('/getProducts' ,   productController.getProducts)
+router.get('/getProducts', auth,  productController.getProducts)
 router.post('/getOneProduct' , newdata ,productController.getOneProduct)
 router.post('/getProductByCategory', newdata ,productController.getProductByCategory)
 router.post('/getProductByStore', newdata ,adminAuth , productController.getProductByStore)
@@ -33,6 +35,5 @@ router.post('/getProductByStore', newdata ,adminAuth , productController.getProd
 router.post('/getProductByFilter', newdata  , productController.getProductByFilter)
 router.post('/removeProductImage',adminAuth ,  productController.removeProductImage)
 
-
-
 module.exports = router
+

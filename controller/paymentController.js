@@ -5,9 +5,9 @@ const { env } = require('process');
 
 exports.getUserPayment = async (req, res) => {
     try {
-        // const mainStoreId = req.headers.mainstoreid 
+        const storeId = req.headers.storeid 
         const userId = req.body.userId
-        const paymentdata = await Payment.findOne({ userId: userId })
+        const paymentdata = await Payment.find({ userId: userId , storeId: storeId})
         if (usercart) {
             res.status(200).json({ message: "ok", data: paymentdata })
         } else {

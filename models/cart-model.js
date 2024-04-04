@@ -12,8 +12,9 @@ const cartSchema = new mongoose.Schema({
         type: Object, 
         required: true,
     },
-    mainStoreId:{
+    storeId:{
         type: String,
+        default : null
         // required: true,
     },
 },

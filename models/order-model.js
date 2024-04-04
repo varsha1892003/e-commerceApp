@@ -56,7 +56,7 @@ const orderSchema = new mongoose.Schema({
         type: Object,
         default: null
     },
-    mainStoreId: {
+    storeId: {
         type: String,
         // required: true,
     },

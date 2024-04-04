@@ -5,7 +5,7 @@ const UserCode = require('../models/userCode-model');
 
 exports.addPromoCode = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainStoreId 
+        const storeId = req.headers.storeid 
         const mypromocode = new Promocode({
             code: req.body.code,
             type: req.body.type,
@@ -13,8 +13,8 @@ exports.addPromoCode = async (req, res) => {
             description: req.body.description,
             expireDate: req.body.expireDate,
             isActive: req.body.isActive,
-            storeId : req.body.storeId,
-            mainStoreId: mainStoreId
+            storeId : storeId,
+
         });
         const mydata = await mypromocode.save()
         if (mydata) {
@@ -34,8 +34,7 @@ exports.addPromoCode = async (req, res) => {
 }
 exports.getPromoCodes = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainStoreId 
-        const mydata = await Promocode.find({mainStoreId:mainStoreId});
+        const mydata = await Promocode.find();
         if (mydata) {
             res.json({ message: 'OK', data: mydata })
         }
@@ -105,10 +104,10 @@ exports.removePromoCode = async (req, res) => {
 exports.searchPromoCode = async (req, res) => {
     try {
         const code = req.body.Promocode
-        const mainStoreId = req.headers.mainStoreId 
+        const storeId = req.headers.storeid 
         const userId = req.body.userId
         const isActive = "true"
-        const mydata = await Promocode.findOne({ code: code , isActive : isActive , mainStoreId:mainStoreId})
+        const mydata = await Promocode.findOne({ code: code , isActive : isActive , storeId:storeId})
         if(mydata){
             const usercode = await UserCode.findOne({userId : userId , promoCodeId : mydata._id})
             if (usercode) {
@@ -128,7 +127,7 @@ exports.searchPromoCode = async (req, res) => {
 }
 exports.getPromoCodesByStore = async (req , res)=>{
     try {
-        const storeId = req.body.storeId
+        const storeId = req.headers.storeid
         const mydata = await Promocode.find({ storeId: storeId });
         if (mydata) {
             res.json({ message: 'OK', data: mydata })

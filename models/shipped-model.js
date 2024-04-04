@@ -12,7 +12,11 @@ const shippedSchema = new mongoose.Schema({
         type: Array,
         // required: true,
         default:null
-    }
+    },
+    storeId:{
+        type:String,
+        default : null
+    },
 },
     {
         timestamps: true,

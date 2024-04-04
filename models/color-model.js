@@ -8,11 +8,11 @@ const ColorSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // code: {
-    //     type: String,
+    storeId: {
+        type: String,
     //     required: true,
     //     unique: true // Ensure each color has a unique code
-    // },
+    },
     // available: {
     //     type: Boolean,
     //     default: true

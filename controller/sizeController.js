@@ -17,11 +17,11 @@ exports.addSize = async (req, res) => {
     }
 }
 
-exports.updateSize = async(req , res)=>{
+exports.updateSize = async (req, res) => {
     try {
-        const { sizeId , name } = req.body
-        const mydata = await Size.findOneAndUpdate({_id : sizeId} , { $set :{name: name }});
-        
+        const { sizeId, name } = req.body
+        const mydata = await Size.findOneAndUpdate({ _id: sizeId }, { $set: { name: name } });
+
         if (mydata) {
             res.json({ message: 'OK', data: "size update succesfully" })
         }
@@ -30,14 +30,14 @@ exports.updateSize = async(req , res)=>{
         }
     } catch (err) {
         res.status(500).json(err)
-    }  
+    }
 }
 
-exports.removeSize = async(req , res)=>{
+exports.removeSize = async (req, res) => {
     try {
-        const {sizeId} = req.body
-        const mydata = await Size.findOneAndDelete({_id : sizeId});
-        
+        const { sizeId } = req.body
+        const mydata = await Size.findOneAndDelete({ _id: sizeId});
+
         if (mydata) {
             res.json({ message: 'OK', data: "size remove succesfully" })
         }
@@ -46,54 +46,52 @@ exports.removeSize = async(req , res)=>{
         }
     } catch (err) {
         res.status(500).json(err)
-    }  
+    }
 }
 
-exports.getSizes = async(req , res) =>{
+exports.getSizes = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainStoreId
+        const mydata = await Size.find()
 
-        const mydata = await Size.find({mainStoreId:mainStoreId})
-        
         if (mydata) {
-            res.json({ message: 'OK', data: mydata})
+            res.json({ message: 'OK', data: mydata })
         }
         else {
             res.status(400).json("please try again")
         }
     } catch (err) {
         res.status(500).json(err)
-    } 
+    }
 }
 
-exports.getOnesize = async(req , res)=>{
+exports.getOnesize = async (req, res) => {
     try {
-        const mydata = await Size.find({_id : req.body.sizeId})
-        
+        const mydata = await Size.find({ _id: req.body.sizeId })
+
         if (mydata) {
-            res.json({ message: 'OK', data: mydata})
+            res.json({ message: 'OK', data: mydata })
         }
         else {
             res.status(400).json("please try again")
         }
     } catch (err) {
         res.status(500).json(err)
-    } 
+    }
 }
 
-exports.getSizeByStore = async(req , res)=>{
+exports.getSizeByStore = async (req, res) => {
     try {
-        const storeId = req.body.storeId
 
-        const mydata = await Size.find({storeId:storeId})
-        
+        const storeId = req.headers.storeid
+        const mydata = await Size.find({ storeId: storeId })
+
         if (mydata) {
-            res.json({ message: 'OK', data: mydata})
+            res.json({ message: 'OK', data: mydata })
         }
         else {
             res.status(400).json("please try again")
         }
     } catch (err) {
         res.status(500).json(err)
-    } 
+    }
 }

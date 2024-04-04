@@ -23,6 +23,10 @@ const paymentSchema = new mongoose.Schema({
         type: String,
         default: "Pending"
     },
+    storeId:{
+        type: String,
+        default: null
+    }
    
 }, {
     timestamps: true,

@@ -23,10 +23,6 @@ const storeSchema =  new mongoose.Schema({
     phone:{
         type:String
     },
-    mainStoreId: {
-        type: String,
-        // required: true,
-    }
 },
    {
     timestamps: true,

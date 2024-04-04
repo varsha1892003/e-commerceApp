@@ -5,6 +5,7 @@ const adminAuth = require('../../middleware/adminAuth')
 const auth = require('../../middleware/userAuth')
 const formData = require('express-form-data');
 const newdata = formData.parse()
+const superAdminAuth = require('../../middleware/superAdminAuth') 
 
 // cart api 
 router.post('/addCart', auth ,  cartController.addCart);

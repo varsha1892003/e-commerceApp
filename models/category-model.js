@@ -16,11 +16,6 @@ const categorySchema = new mongoose.Schema({
     images: {
         type: Array,
     },
-    mainStoreId: {
-        type: String,
-        default :null
-        // required: true,
-    },
     storeId:{
         type: String,
         required: true,

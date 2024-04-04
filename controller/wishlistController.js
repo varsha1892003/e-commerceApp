@@ -7,7 +7,7 @@ const { env } = require('process');
 exports.addWishlist = async (req, res) => {
     try {
         const wishlisttrue = "true"
-        const mainStoreId = req.headers.mainStoreId 
+        const storeId = req.headers.storeid 
         let updatewishlistData = []
         const { productId, userId } = req.body
         const wishlist = await Wishlist.findOne({ userId: userId  })
@@ -16,7 +16,7 @@ exports.addWishlist = async (req, res) => {
             const mywishlist = new Wishlist({
                 userId: userId,
                 productIds: req.body.productId,
-                mainStoreId:mainStoreId
+                storeId:storeId
             });
             
             const mydata = await mywishlist.save()
@@ -84,8 +84,8 @@ exports.getUserWishlist = async (req, res) => {
     try {
         const userId = req.body.userId
         const finaldata = []
-        const mainStoreId = req.headers.mainStoreId 
-        const userwishlist = await Wishlist.findOne({ userId: userId ,mainStoreId:mainStoreId })
+        const storeId = req.headers.storeid 
+        const userwishlist = await Wishlist.findOne({ userId: userId ,storeId:storeId })
         if(userwishlist){
         for (let i in userwishlist.productIds) 
         {

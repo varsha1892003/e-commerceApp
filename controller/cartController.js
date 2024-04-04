@@ -7,10 +7,10 @@ const Product = require('../models/product-model');
 exports.addCart = async (req, res) => {
     try {
         const carttrue = "true"
-        const mainStoreId = req.headers.mainStoreId 
+        const storeId = req.headers.storeid 
         let updateproductData = []
-        const cart = await Cart.findOne({ userId: req.body.userId })
-        const isproductid = await Cart.findOne({ userId: req.body.userId, "productData.productId": req.body.productId })
+        const cart = await Cart.findOne({ userId: req.body.userId})
+        const isproductid = await Cart.findOne({ userId: req.body.userId, "productData.productId": req.body.productId , storeId:storeId})
         if (!cart) {
             console.log("i am if")
             const myproductData = []
@@ -24,7 +24,7 @@ exports.addCart = async (req, res) => {
             const mycart = new Cart({
                 userId: req.body.userId,
                 productData: myproductData,
-                mainStoreId:mainStoreId
+                storeId:storeId
             });
             const mydata = await mycart.save()
             if (mydata) {
@@ -66,7 +66,7 @@ exports.addCart = async (req, res) => {
 }
 exports.getUserCart = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainStoreId 
+        const storeId = req.headers.storeid 
         const userId = req.body.userId
         const finaldata = []
         const usercart = await Cart.findOne({ userId: userId })
@@ -76,7 +76,7 @@ exports.getUserCart = async (req, res) => {
                     "product": '',
                     "quantity": ''
                 }
-                const productData = await Product.findOne({ _id: usercart.productData[i].productId } , {mainStoreId:mainStoreId})
+                const productData = await Product.findOne({ _id: usercart.productData[i].productId } , {storeId:storeId})
                 newd.product = productData
                 newd.quantity = usercart.productData[i].productQuantity
                 finaldata.push(newd)

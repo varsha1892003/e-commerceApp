@@ -12,7 +12,7 @@ const wishlistSchema = new mongoose.Schema({
         type: Array,
         required: true,
     },
-    mainStoreId : {
+    storeId : {
         type:String,
         default:null
         // require :true
