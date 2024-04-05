@@ -52,8 +52,8 @@ app.get('/', (req, res) => {
 
 // const server = http.createServer(options, app);
 
-app.listen(443, () => {
-   console.log("Server starting on port : " + 443)
+app.listen(process.env.PORT, () => {
+   console.log("Server starting on port : " + process.env.PORT)
 });
 
 // app.listen(process.env.PORT ,)

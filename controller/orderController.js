@@ -213,20 +213,28 @@ exports.kanbanData = async (req, res) => {
         
         let kanbandata = []
         const neworderslist = await Neworders.find()
+        if(neworderslist.length){
         const obj = await myfilterdata(neworderslist, month, year , storeId)
         kanbandata.push(obj)
+        }
 
         const intransitlist = await Intransit.find()
+        if(intransitlist.length){
         const obj2 = await myfilterdata(intransitlist, month, year , storeId)
         kanbandata.push(obj2)
+        }
 
         const Shippedlist = await Shipped.find()
+        if(Shippedlist.length){
         const obj4 = await myfilterdata(Shippedlist, month, year , storeId)
         kanbandata.push(obj4)
+        }
 
         const Deliveredlist = await Delivered.find()
+        if(Deliveredlist.length){
         const obj3 = await myfilterdata(Deliveredlist, month, year , storeId)
         kanbandata.push(obj3)
+        }
 
         res.json({ message: 'OK', data: kanbandata })
     } catch (err) {
