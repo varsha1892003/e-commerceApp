@@ -11,7 +11,7 @@ exports.getUserPayment = async (req, res) => {
         if (usercart) {
             res.status(200).json({ message: "ok", data: paymentdata })
         } else {
-            res.status(200).json("please try again")
+            res.status(200).json({message: "No data found", data: []})
         }
     } catch (err) {
         console.log(err)
@@ -26,7 +26,7 @@ exports.getpayments = async (req, res) => {
         if (usercart) {
             res.status(200).json({ message: "ok", data: paymentdata })
         } else {
-            res.status(200).json("please try again")
+            res.status(200).json({message: "No data found", data: []})
         }
     } catch (err) {
         console.log(err)

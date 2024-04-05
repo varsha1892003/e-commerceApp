@@ -122,7 +122,7 @@ exports.getProducts = async (req, res) => {
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(500).json({ message: "no product found" })
+            res.status(500).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(400).json(err)
@@ -135,7 +135,7 @@ exports.getOneProduct = async (req, res) => {
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(500).json({ message: "no Product found" })
+            res.status(500).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(400).json(err)
@@ -143,15 +143,20 @@ exports.getOneProduct = async (req, res) => {
 }
 exports.getProductByCategory = async (req, res) => {
     try {
-        const mainStoreId = req.headers.mainstoreid 
+        const storeId = req.headers.storeid 
         const categoryId = req.body.categoryId
+        if(storeId){
         const mydata = await Product.find({ categoryId: categoryId ,mainStoreId: mainStoreId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         }
         else {
-            res.status(500).json("no product found")
+            res.status(500).json({message: "No data found", data: []})
         }
+    }
+    else{
+        res.status(500).json({message: "not get storeid "})
+    }
     }
     catch (err) {
         res.status(500).json(err)
@@ -160,13 +165,18 @@ exports.getProductByCategory = async (req, res) => {
 exports.getProductByStore = async (req, res) => {
     try {
         const storeId = req.body.storeId
+        if(storeId){
         const mydata = await Product.find({ storeId: storeId })
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         }
         else {
-            res.status(500).json("no product found")
+            res.status(500).json({message: "No data found", data: []})
         }
+    }
+    else{
+        res.status(500).json({message: "not get storeid "})
+    }
     }
     catch (err) {
         res.status(500).json(err)
@@ -200,7 +210,7 @@ exports.getProductByFilter = async (req, res) => {
         if (alldata.length > 0) {
             res.status(200).json({ message: "ok", data: alldata });
         } else {
-            res.status(200).json({ message:"ok" , data:  "No products found" });
+            res.status(200).json({message: "No data found", data: []});
         }
     }
     catch (err) {

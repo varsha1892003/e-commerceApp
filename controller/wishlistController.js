@@ -95,7 +95,7 @@ exports.getUserWishlist = async (req, res) => {
         res.status(200).json({ message: "ok", data: finaldata })
         }
         else{
-            res.status(200).json("please trt again")
+            res.status(200).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)

@@ -26,7 +26,7 @@ exports.updateSize = async (req, res) => {
             res.json({ message: 'OK', data: "size update succesfully" })
         }
         else {
-            res.status(400).json("please try again")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -57,7 +57,7 @@ exports.getSizes = async (req, res) => {
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.status(400).json("please try again")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -72,7 +72,7 @@ exports.getOnesize = async (req, res) => {
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.status(400).json("please try again")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -89,7 +89,7 @@ exports.getSizeByStore = async (req, res) => {
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.status(400).json("please try again")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)

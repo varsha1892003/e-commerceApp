@@ -39,7 +39,7 @@ exports.getPromoCodes = async (req, res) => {
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.json({ message: 'OK', data: "please try again" })
+            res.json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -53,7 +53,7 @@ exports.getOnePromoCode = async (req, res) => {
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.json("please try again" )
+            res.json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -133,7 +133,7 @@ exports.getPromoCodesByStore = async (req , res)=>{
             res.json({ message: 'OK', data: mydata })
         }
         else {
-            res.json("please try again" )
+            res.json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)

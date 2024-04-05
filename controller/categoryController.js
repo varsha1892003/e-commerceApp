@@ -103,10 +103,11 @@ exports.getCategorys = async (req, res) => {
     try {
         console.log("i am clall")
         const mydata = await Category.find()
-        if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
+        if (mydata && mydata.length > 0) {
+            res.status(200).json({ message: "Categories found", data: mydata });
         } else {
-            res.status(500).json({ message: "no Category found" })
+            // Send an empty array if no categories are found
+            res.status(200).json({ message: "No categories found", data: [] });
         }
     } catch (err) {
         console.log(err)
@@ -120,7 +121,7 @@ exports.getOneCategory = async (req, res) => {
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(500).json({ message: "no Category found" })
+            res.status(500).json({message: "No categories found", data: [] })
         }
     } catch (err) {
         res.status(400).json(err)
@@ -128,15 +129,21 @@ exports.getOneCategory = async (req, res) => {
 }
 exports.getCategoryByStore = async (req , res)=>{
     try {
+         
         const storeId = req.headers.storeid
+        if(storeId){
         const mydata = await Category.find({storeId:storeId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(500).json({ message: "no Category found" })
+            res.status(500).json({message: "No categories found", data: []})
+        }
+    }
+        else{
+            res.status(500).json({message: "not get storeid "})
         }
     } catch (err) {
+        console.log(err)
         res.status(400).json(err)
     }
 }
-

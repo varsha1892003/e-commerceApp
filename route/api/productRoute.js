@@ -29,8 +29,8 @@ router.post('/updateProduct',  upload.array('images' ,10) ,adminAuth,  productCo
 // product api 
 router.get('/getProducts', superAdminAuth,  productController.getProducts)
 router.post('/getOneProduct' , newdata ,productController.getOneProduct)
-router.post('/getProductByCategory', newdata ,auth , productController.getProductByCategory)
-router.post('/getProductByStore', newdata , auth , productController.getProductByStore)
+router.post('/getProductByCategory', newdata , productController.getProductByCategory)
+router.post('/getProductByStore', newdata  , productController.getProductByStore)
 
 router.post('/getProductByFilter', newdata  , productController.getProductByFilter)
 router.post('/removeProductImage',adminAuth ,  productController.removeProductImage)

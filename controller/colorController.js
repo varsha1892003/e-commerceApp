@@ -25,7 +25,7 @@ exports.updateColor = async(req , res)=>{
             res.json({ message: 'OK', data: "Color update succesfully" })
         }
         else {
-            res.status(400).json("please try again")
+            res.status(400).json({message: "No categories found"})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -56,7 +56,7 @@ exports.getColors = async(req , res) =>{
             res.json({ message: 'OK', data: mydata})
         }
         else {
-            res.status(400).json("please try again")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -71,7 +71,7 @@ exports.getOneColor = async(req , res)=>{
             res.json({ message: 'OK', data: mydata})
         }
         else {
-            res.status(400).json("please try again")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -87,7 +87,7 @@ exports.getColorByStore = async(req , res)=>{
         res.json({ message: 'OK', data: mydata})
     }
     else {
-        res.status(400).json("please try again")
+        res.status(400).json({message: "No data found", data: []})
     }
 } catch (err) {
     res.status(500).json(err)

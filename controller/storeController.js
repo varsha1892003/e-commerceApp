@@ -36,9 +36,9 @@ exports.getStores = async (req, res) => {
     try {
         const mydata = await Store.find()
         if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
+            res.json({ message: "ok", "data": mydata })
         } else {
-            res.status(500).json({ message: "no Store found" })
+            res.json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(400).json(err)
@@ -115,9 +115,9 @@ exports.getOneStore = async (req, res) => {
     try {
         const mydata = await Store.find({ _id: storeId })
         if (mydata) {
-            res.status(200).json({ message: "ok", "data": mydata })
+            res.json({ message: "ok", "data": mydata })
         } else {
-            res.status(500).json({ message: "no Store found" })
+            res.json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(400).json(err)

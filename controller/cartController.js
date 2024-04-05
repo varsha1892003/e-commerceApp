@@ -85,7 +85,7 @@ exports.getUserCart = async (req, res) => {
             }
             res.status(200).json({ message: "ok", data: finaldata })
         } else {
-            res.status(200).json("please try again")
+            res.status(200).json({message: "No categories found", data: []})
         }
 
     } catch (err) {

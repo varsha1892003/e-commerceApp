@@ -25,7 +25,7 @@ router.post('/updateCategory',  adminAuth , upload3.single('images'), categoryCo
 router.post('/addCategory', adminAuth ,  upload3.single('images') , categoryController.addCategory);
 router.post('/removeCategory', newdata , adminAuth  , categoryController.removeCategory);
 router.post('/getOneCategory', newdata ,  categoryController.getOneCategory);
-router.post('/getCategoryByStore', newdata , auth  ,categoryController.getCategoryByStore);
+router.post('/getCategoryByStore', categoryController.getCategoryByStore);
 
 
 

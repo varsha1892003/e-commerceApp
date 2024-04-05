@@ -46,7 +46,7 @@ exports.getNotifications = async (req, res) => {
             res.status(200).json({ message: "ok", data: mydata })
         }
         else {
-            res.status(400).json("no data found")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -61,7 +61,7 @@ exports.getOneNotification = async (req, res) => {
             res.status(200).json({ message: "ok", data: mydata })
         }
         else {
-            res.status(400).json("no data found")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -131,7 +131,7 @@ exports.getUserNotification = async(req , res)=>{
             res.status(200).json({ message: "ok", data: mydata })
         }
         else {
-            res.status(400).json("no data found")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)

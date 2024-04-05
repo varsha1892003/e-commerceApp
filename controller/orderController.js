@@ -26,7 +26,7 @@ exports.getUserOrder = async (req, res) => {
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(500).json("no order found")
+            res.status(500).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(400).json(err)
@@ -40,7 +40,7 @@ exports.getOrdersByStore = async (req, res) => {
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(400).json("no Order found")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -53,7 +53,7 @@ exports.getOrders = async (req, res) => {
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(400).json("no Order found")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
@@ -428,7 +428,12 @@ exports.getUserOrderStatus = async (req, res) => {
             }
             latesetdata.push(listItem)
         }
+        if(mydata){
         res.json({ message: "ok", data: latesetdata })
+        }
+        else{
+            res.json({message: "No data found", data: []})
+        }
     }
     catch (err) {
         console.log(err)
@@ -443,7 +448,7 @@ exports.getOneOrder = async (req, res) => {
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
-            res.status(400).json("no Order found")
+            res.status(400).json({message: "No data found", data: []})
         }
     } catch (err) {
         res.status(500).json(err)
