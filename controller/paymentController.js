@@ -21,8 +21,8 @@ exports.getUserPayment = async (req, res) => {
 
 exports.getpayments = async (req, res) => {
     try {
-        // const mainStoreId = req.headers.mainstoreid 
-        const paymentdata = await Payment.findOne()
+        const storeId = req.headers.storeid 
+        const paymentdata = await Payment.find({storeId:storeId})
         if (usercart) {
             res.status(200).json({ message: "ok", data: paymentdata })
         } else {

@@ -27,10 +27,10 @@ router.post('/removeProduct', newdata , adminAuth , productController.removeProd
 router.post('/updateProduct',  upload.array('images' ,10) ,adminAuth,  productController.updateProduct);
 
 // product api 
-router.get('/getProducts', auth,  productController.getProducts)
+router.get('/getProducts', superAdminAuth,  productController.getProducts)
 router.post('/getOneProduct' , newdata ,productController.getOneProduct)
-router.post('/getProductByCategory', newdata ,productController.getProductByCategory)
-router.post('/getProductByStore', newdata ,adminAuth , productController.getProductByStore)
+router.post('/getProductByCategory', newdata ,auth , productController.getProductByCategory)
+router.post('/getProductByStore', newdata , auth , productController.getProductByStore)
 
 router.post('/getProductByFilter', newdata  , productController.getProductByFilter)
 router.post('/removeProductImage',adminAuth ,  productController.removeProductImage)

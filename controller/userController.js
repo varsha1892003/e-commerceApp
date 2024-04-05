@@ -229,7 +229,7 @@ exports.updateProfile = async (req, res) => {
         else if (olddata.profilePic) {
             profilepic = olddata.profilePic
         }
-        const mydata = await User.findOneAndUpdate({ _id: userId }, {
+        const mydata = await User.findOneAndUpdate({ _id: userId , storeId:req.headers.storeid}, {
             $set: {
                 firstName: formdata.firstName,
                 lastName: formdata.lastName,
@@ -241,7 +241,7 @@ exports.updateProfile = async (req, res) => {
         })
         if (formdata.address) {
             for (let i in formdata.address) {
-                const olddata = await Address.findOne({ _id: formdata.address[i]._id })
+                const olddata = await Address.findOne({ _id: formdata.address[i]._id , storeId:req.body.storeid})
                 if (olddata) {
                     await Address.findOneAndUpdate({ _id: olddata._id }, {
                         $set:
@@ -251,7 +251,8 @@ exports.updateProfile = async (req, res) => {
                             "state": formdata.address[i].state,
                             "country": formdata.address[i].country,
                             "zip": formdata.address[i].zip,
-                            "apartment": formdata.address[i].apartment
+                            "apartment": formdata.address[i].apartment,
+                            
                         }
                     })
                 }
@@ -263,7 +264,8 @@ exports.updateProfile = async (req, res) => {
                         "country": formdata.address[i].country,
                         "zip": formdata.address[i].zip,
                         "apartment": formdata.address[i].apartment,
-                        "userId": userId
+                        "userId": userId,
+                        "storeId":req.headers.storeid
                     })
                     const mydata = await newaddess.save()
                 }
@@ -283,20 +285,35 @@ exports.updateProfile = async (req, res) => {
 exports.getUserProfile = async (req, res) => {
     try {
         const mydata = await User.findOne({ _id: req.body.userId })
-        const addressdata = await Address.find({ userId: req.body.userId })
-        mydata.address = addressdata
+        const addressdata = await Address.find({ userId: req.body.userId , storeId : req.headers.storeid })
+        if (addressdata.length) {
+            mydata.address = addressdata
+        }
         if (mydata) {
             res.json({ message: "ok", data: mydata })
         }
+        else {
+            res.json("user not found")
+        }
     }
     catch (err) {
+        console.log(err)
         res.status(500).json(err)
     }
 }
 exports.addAddress = async (req, res) => {
     try {
         const { address, city, state, country, zip, userId, apartment } = req.body
-        const newaddess = new Address(req.body)
+        const newaddess = new Address({
+            address: address,
+            city: city,
+            state: state,
+            country: country,
+            zip: zip,
+            userId: userId,
+            apartment: apartment,
+            storeId: req.headers.storeid
+        })
         const mydata = await newaddess.save()
         if (mydata) {
             res.status(200).json({ message: "ok", data: "address add succesfully" })

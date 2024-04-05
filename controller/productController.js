@@ -6,7 +6,7 @@ const Category = require('../models/category-model')
 
 exports.addProduct = async (req, res) => {
     try {
-        const storeId = req.headers.storeId
+        const storeId = req.headers.storeid
 
         const formdata = JSON.parse(req.body.formData)
         const storedata = await Store.findOne({ _id: storeId })
@@ -25,7 +25,7 @@ exports.addProduct = async (req, res) => {
             description: formdata.description,
             categoryId: formdata.categoryId,
             categoryName: categorydata.categoryName,
-            storeId: formdata.storeId,
+            storeId: storeId,
             storeName: storedata.storeName,
             stock: formdata.stock,
             discountPrice: formdata.discountPrice,
@@ -118,8 +118,7 @@ exports.removeProduct = async (req, res) => {
 }
 exports.getProducts = async (req, res) => {
     try {
-        const storeId = req.headers.storeid
-        const mydata = await Product.find({storeId : storeId})
+        const mydata = await Product.find()
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {

@@ -69,16 +69,18 @@ exports.getUserCart = async (req, res) => {
         const storeId = req.headers.storeid 
         const userId = req.body.userId
         const finaldata = []
-        const usercart = await Cart.findOne({ userId: userId })
+        const usercart = await Cart.findOne({ userId: userId , storeId:storeId})
         if (usercart) {
             for (let i in usercart.productData) {
                 const newd = {
                     "product": '',
-                    "quantity": ''
+                    "quantity": '',
+                    'storeId': ''
                 }
-                const productData = await Product.findOne({ _id: usercart.productData[i].productId } , {storeId:storeId})
+                const productData = await Product.findOne({ _id: usercart.productData[i].productId })
                 newd.product = productData
                 newd.quantity = usercart.productData[i].productQuantity
+                newd.storeId = usercart.storeId
                 finaldata.push(newd)
             }
             res.status(200).json({ message: "ok", data: finaldata })

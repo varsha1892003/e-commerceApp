@@ -101,14 +101,15 @@ exports.removeCategory = async (req, res) => {
 }
 exports.getCategorys = async (req, res) => {
     try {
-        const storeId = req.headers.storeid
-        const mydata = await Category.find({storeId:storeId})
+        console.log("i am clall")
+        const mydata = await Category.find()
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         } else {
             res.status(500).json({ message: "no Category found" })
         }
     } catch (err) {
+        console.log(err)
         res.status(400).json(err)
     }
 }
