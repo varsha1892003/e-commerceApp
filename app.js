@@ -39,20 +39,20 @@ app.get( '/test' , (req , res)=>{
     res.send("hey")
 
 })
-const passphrase = 'varsha@123';
+// const passphrase = 'varsha@123';
 
-const options = {
-    key: fs.readFileSync("./key/private.key"), // replace it with your key path
-    cert: fs.readFileSync("./key/certificate.crt"), // replace it with your certificate path
-}
+// const options = {
+//     key: fs.readFileSync("./key/private.key"), // replace it with your key path
+//     cert: fs.readFileSync("./key/certificate.crt"), // replace it with your certificate path
+// }
 
 app.get('/', (req, res) => {
     res.send('Now using https..');
 });
 
-const server = https.createServer(options, app);
+// const server = http.createServer(options, app);
 
-server.listen(443, () => {
+app.listen(443, () => {
    console.log("Server starting on port : " + 443)
 });
 
