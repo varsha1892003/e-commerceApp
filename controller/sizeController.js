@@ -4,7 +4,10 @@ const Size = require('../models/size-model')
 
 exports.addSize = async (req, res) => {
     try {
-        const newsize = new Size(req.body);
+        const newsize = new Size({
+            name:req.body.name,
+            storeId:req.headers.storeid
+        });
         const mydata = await newsize.save()
         if (mydata) {
             res.json({ message: 'OK', data: "size add succesfully" })

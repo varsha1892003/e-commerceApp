@@ -146,7 +146,7 @@ exports.getProductByCategory = async (req, res) => {
         const storeId = req.headers.storeid 
         const categoryId = req.body.categoryId
         if(storeId){
-        const mydata = await Product.find({ categoryId: categoryId ,mainStoreId: mainStoreId})
+        const mydata = await Product.find({ categoryId: categoryId ,storeId: storeId})
         if (mydata) {
             res.status(200).json({ message: "ok", "data": mydata })
         }
